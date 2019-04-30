@@ -9,7 +9,7 @@
   </details>
   <details>
     <summary><i>点击查看C语言实现代码</i></summary>
-    <pre>
+    <pre><code>
 #include <reg51.h>
 sbit P1_0 = P1^0;
 sbit P1_1 = P1^1;
@@ -57,7 +57,7 @@ void main()
 	}
 	
 }
-    </pre>
+    </code></pre>
   </details>
   <br><br>
 
