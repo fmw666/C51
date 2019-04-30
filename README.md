@@ -7,7 +7,6 @@
     <summary><i>点击展开 Proteus仿真实验图</i></summary>
     <img src="images/pro1.png" width="900">
   </details>
-  <br><br>
   <details>
     <summary><i>点击查看C语言实现代码</i></summary>
     <pre>
