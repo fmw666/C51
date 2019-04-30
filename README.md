@@ -4,12 +4,12 @@
 
 #### 1. 数码管数字显示控制程序设计。控制要求：用按键K1和K2分别控制数码管显示数字0~9的顺序，当按下K1键时按从0到9的顺序显示，当按下K2时按从9到0的顺序显示。时间间隔均为1秒。硬件电路如图所示。
   <details>
-    <summary><b>点击展开 Proteus仿真实验图</b></summary>
+    <summary><i>点击展开 Proteus仿真实验图</i></summary>
     <img src="images/pro1.png" width="900">
   </details>
   <br><br>
   <details>
-    <summary><b>点击查看C语言实现代码</b></summary>
+    <summary><i>点击查看C语言实现代码</i></summary>
     <pre>
     #include <reg51.h>
     </pre>
