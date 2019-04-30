@@ -8,7 +8,7 @@
     <img src="images/pro1.png" width="900">
   </details>
   <div align="right">
-    <a href="">查看C语言源代码</a>
+    <a href="">跳转查看C语言源代码➡</a>
   </div>
   <br><br>
 
@@ -17,6 +17,9 @@
     <summary><i>点击展开 Proteus仿真实验图</i></summary>
     <img src="images/pro2.png" width="900">
   </details>
+  <div align="right">
+    <a href="">跳转查看C语言源代码➡</a>
+  </div>
   <br><br>
 
 #### 3. LED灯要求亮2秒钟，灭2秒钟，要求使用定时计数器，要求写主程序与中断程序，fosc = 6MHz
@@ -24,6 +27,9 @@
     <summary><i>点击展开 Proteus仿真实验图</i></summary>
     <img src="images/pro3.png" width="900">
   </details>
+  <div align="right">
+    <a href="">跳转查看C语言源代码➡</a>
+  </div>
   <br><br>
 
 #### 4. 利用外部中断0，每申请一次中断使P0口连接的发光二极管点亮一个，从低位到高位，同时使P1口连接的发光二极管熄灭一个，从高位到低位。
@@ -31,6 +37,9 @@
     <summary><i>点击展开 Proteus仿真实验图</i></summary>
     <img src="images/pro4.png" width="900">
   </details>
+  <div align="right">
+    <a href="">跳转查看C语言源代码➡</a>
+  </div>
   <br><br>
   
 #### 5. 完成下面电路所示的功能，K1，K2对应两个开关按键。P1口对应发光二极管的状态
@@ -45,6 +54,9 @@
     <summary><i>点击展开 Proteus仿真实验图</i></summary>
     <img src="images/pro5.png" width="900">
   </details>
+  <div align="right">
+    <a href="">跳转查看C语言源代码➡</a>
+  </div>
   <br><br>
   
 #### 6. 在一个数码管上循环显示“H”“E” “L” “L” “O” ,循环的时间为1s。
@@ -52,6 +64,9 @@
     <summary><i>点击展开 Proteus仿真实验图</i></summary>
     <img src="images/pro6.png" width="900">
   </details>
+  <div align="right">
+    <a href="">跳转查看C语言源代码➡</a>
+  </div>
   <br><br>
   
 #### 7. 试采用定时方式2，在P1.0引脚上输出频率为1KHz的方波。
@@ -59,6 +74,9 @@
     <summary><i>点击展开 Proteus仿真实验图</i></summary>
     <img src="images/pro7.png" width="900">
   </details>
+  <div align="right">
+    <a href="">跳转查看C语言源代码➡</a>
+  </div>
   <br><br>
   
 #### 8. 完成下面电路的功能，P1口对应发光二极管的状态，状态1显示的时间为1s，状态2显示的时间为2s，状态3显示的时间为3s，如此循环。
@@ -72,6 +90,9 @@
     <summary><i>点击展开 Proteus仿真实验图</i></summary>
     <img src="images/pro8.png" width="900">
   </details>
+  <div align="right">
+    <a href="">跳转查看C语言源代码➡</a>
+  </div>
   <br><br>
   
 #### 9. 彩灯系统，实现8个发光二极管从左到右点亮，每个发光二极管点亮的时间为2s，然后从右到左亮，每个发光二极管点亮的时间为1.5s。
@@ -80,4 +101,7 @@
     <summary><i>点击展开 Proteus仿真实验图</i></summary>
     <img src="images/pro9.png" width="900">
   </details>
+  <div align="right">
+    <a href="">跳转查看C语言源代码➡</a>
+  </div>
   <br><br>
