@@ -11,3 +11,19 @@
 + [](#)
 
 1. 数码管数字显示控制程序设计。控制要求：用按键K1和K2分别控制数码管显示数字0~9的顺序，当按下K1键时按从0到9的顺序显示，当按下K2时按从9到0的顺序显示。时间间隔均为1秒。硬件电路如图所示。
+
+<div align="center">
+  <img src="images/pro1.png" width="700">
+</div>
+
+1. 交通控制系统，如下图所示，是交叉路口，要求：绿灯亮9秒后，黄灯闪3秒，后红灯亮9秒，两个数码管分别显视各种灯所剩余时间。
+
+<div align="center">
+  <img src="images/pro2.png" width="700">
+</div>
+
+1. LED灯要求亮2秒钟，灭2秒钟，要求使用定时计数器，要求写主程序与中断程序，fosc = 6MHz
+
+<div align="center">
+  <img src="images/pro3.png" width="700">
+</div>
