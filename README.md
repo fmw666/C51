@@ -1,5 +1,7 @@
 # 单片机原理与接口技术实验题
 
+> ***注意：** 仅供个人学习使用，不涉及一切商业或其他行为。*
+
 ---
 
 #### 1. 数码管数字显示控制程序设计。控制要求：用按键K1和K2分别控制数码管显示数字0~9的顺序，当按下K1键时按从0到9的顺序显示，当按下K2时按从9到0的顺序显示。时间间隔均为1秒。硬件电路如图所示。
@@ -8,7 +10,7 @@
     <img src="images/pro1.png" width="900">
   </details>
   <div align="right">
-    <a href="">跳转查看C语言源代码➡</a>
+    <a href="code/pro1.c">跳转查看C语言源代码➡</a>
   </div>
   <br><br>
 
@@ -18,7 +20,7 @@
     <img src="images/pro2.png" width="900">
   </details>
   <div align="right">
-    <a href="">跳转查看C语言源代码➡</a>
+    <a href="code/pro2.c">跳转查看C语言源代码➡</a>
   </div>
   <br><br>
 
@@ -28,7 +30,7 @@
     <img src="images/pro3.png" width="900">
   </details>
   <div align="right">
-    <a href="">跳转查看C语言源代码➡</a>
+    <a href="code/pro3.c">跳转查看C语言源代码➡</a>
   </div>
   <br><br>
 
@@ -38,7 +40,7 @@
     <img src="images/pro4.png" width="900">
   </details>
   <div align="right">
-    <a href="">跳转查看C语言源代码➡</a>
+    <a href="code/pro4.c">跳转查看C语言源代码➡</a>
   </div>
   <br><br>
   
@@ -55,7 +57,7 @@
     <img src="images/pro5.png" width="900">
   </details>
   <div align="right">
-    <a href="">跳转查看C语言源代码➡</a>
+    <a href="code/pro5.c">跳转查看C语言源代码➡</a>
   </div>
   <br><br>
   
@@ -65,7 +67,7 @@
     <img src="images/pro6.png" width="900">
   </details>
   <div align="right">
-    <a href="">跳转查看C语言源代码➡</a>
+    <a href="code/pro6.c">跳转查看C语言源代码➡</a>
   </div>
   <br><br>
   
@@ -75,7 +77,7 @@
     <img src="images/pro7.png" width="900">
   </details>
   <div align="right">
-    <a href="">跳转查看C语言源代码➡</a>
+    <a href="code/pro7.c">跳转查看C语言源代码➡</a>
   </div>
   <br><br>
   
@@ -91,7 +93,7 @@
     <img src="images/pro8.png" width="900">
   </details>
   <div align="right">
-    <a href="">跳转查看C语言源代码➡</a>
+    <a href="code/pro8.c">跳转查看C语言源代码➡</a>
   </div>
   <br><br>
   
@@ -102,6 +104,6 @@
     <img src="images/pro9.png" width="900">
   </details>
   <div align="right">
-    <a href="">跳转查看C语言源代码➡</a>
+    <a href="code/pro9.c">跳转查看C语言源代码➡</a>
   </div>
   <br><br>
