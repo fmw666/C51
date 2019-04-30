@@ -1,14 +1,6 @@
 # 单片机原理与接口技术实验题
 
-+ [](#)
-+ [](#)
-+ [](#)
-+ [](#)
-+ [](#)
-+ [](#)
-+ [](#)
-+ [](#)
-+ [](#)
+---
 
 #### 1. 数码管数字显示控制程序设计。控制要求：用按键K1和K2分别控制数码管显示数字0~9的顺序，当按下K1键时按从0到9的顺序显示，当按下K2时按从9到0的顺序显示。时间间隔均为1秒。硬件电路如图所示。
   <div align="left">
@@ -23,13 +15,13 @@
   <br><br>
 
 #### 3. LED灯要求亮2秒钟，灭2秒钟，要求使用定时计数器，要求写主程序与中断程序，fosc = 6MHz
-  <div align="center">
+  <div align="left">
     <img src="images/pro3.png" width="900">
   </div>
   <br><br>
 
 #### 4. 利用外部中断0，每申请一次中断使P0口连接的发光二极管点亮一个，从低位到高位，同时使P1口连接的发光二极管熄灭一个，从高位到低位。
-  <div align="center">
+  <div align="left">
     <img src="images/pro4.png" width="900">
   </div>
   <br><br>
@@ -42,19 +34,19 @@
 |K1=1,K2=0|●|●|○|○|●|●|○|○|
 |K1=1,K2=1|●|●|●|●|●|●|●|●|
 
-  <div align="center">
+  <div align="left">
     <img src="images/pro5.png" width="900">
   </div>
   <br><br>
   
 #### 6. 在一个数码管上循环显示“H”“E” “L” “L” “O” ,循环的时间为1s。
-  <div align="center">
+  <div align="left">
     <img src="images/pro6.png" width="900">
   </div>
   <br><br>
   
 #### 7. 试采用定时方式2，在P1.0引脚上输出频率为1KHz的方波。
-  <div align="center">
+  <div align="left">
     <img src="images/pro7.png" width="900">
   </div>
   <br><br>
@@ -66,14 +58,14 @@
 |状态2|○|●|●|
 |状态3|●|●|○|
 
-  <div align="center">
+  <div align="left">
     <img src="images/pro8.png" width="900">
   </div>
   <br><br>
   
 #### 9. 彩灯系统，实现8个发光二极管从左到右点亮，每个发光二极管点亮的时间为2s，然后从右到左亮，每个发光二极管点亮的时间为1.5s。
 
-  <div align="center">
+  <div align="left">
     <img src="images/pro9.png" width="900">
   </div>
   <br><br>
