@@ -7,6 +7,9 @@
     <summary><i>点击展开 Proteus仿真实验图</i></summary>
     <img src="images/pro1.png" width="900">
   </details>
+  <div align="right">
+    <a href="">查看C语言源代码</a>
+  </div>
   <br><br>
 
 #### 2. 交通控制系统，如下图所示，是交叉路口，要求：绿灯亮9秒后，黄灯闪3秒，后红灯亮9秒，两个数码管分别显视各种灯所剩余时间。
