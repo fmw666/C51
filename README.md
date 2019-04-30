@@ -41,3 +41,39 @@
 |K1=0,K2=1|●|●|●|●|○|○|○|○|
 |K1=1,K2=0|●|●|○|○|●|●|○|○|
 |K1=1,K2=1|●|●|●|●|●|●|●|●|
+
+  <div align="center">
+    <img src="images/pro5.png" width="800">
+  </div>
+  <br><br>
+  
+#### 6. 在一个数码管上循环显示“H”“E” “L” “L” “O” ,循环的时间为1s。
+  <div align="center">
+    <img src="images/pro6.png" width="800">
+  </div>
+  <br><br>
+  
+#### 7. 试采用定时方式2，在P1.0引脚上输出频率为1KHz的方波。
+  <div align="center">
+    <img src="images/pro7.png" width="800">
+  </div>
+  <br><br>
+  
+#### 8. 完成下面电路的功能，P1口对应发光二极管的状态，状态1显示的时间为1s，状态2显示的时间为2s，状态3显示的时间为3s，如此循环。
+|状态|P1.0|P1.1|P1.2|
+|:--:|:---|:---|:---|
+|状态1|●|○|●|
+|状态2|○|●|●|
+|状态3|●|●|○|
+
+  <div align="center">
+    <img src="images/pro8.png" width="800">
+  </div>
+  <br><br>
+  
+#### 9. 彩灯系统，实现8个发光二极管从左到右点亮，每个发光二极管点亮的时间为2s，然后从右到左亮，每个发光二极管点亮的时间为1.5s。
+
+  <div align="center">
+    <img src="images/pro9.png" width="800">
+  </div>
+  <br><br>
