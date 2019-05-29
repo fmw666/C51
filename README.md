@@ -1,11 +1,11 @@
 # 单片机
 &emsp;&emsp;*《传感器技术》是计算机科学与技术物联网方向和嵌入式方向的一门核心专业课程，是一门理论性和实践性都很强的综合性课程，在计算机科学与技术中具有十分重要的作用。*
 
-<div algin="center">
-    <img src="https://github.com/fmw666/my-image-file/blob/master/images/gif/4.gif" width="200">
+<div align="center">
+    <img src="https://github.com/fmw666/my-image-file/blob/master/images/gif/4.gif" width="150">
 </div>
 
-# 单片机原理与接口技术实验题
+### 单片机原理与接口技术实验题
 
 > ***注意：** 仅供个人学习使用，不涉及一切商业或其他行为。*
 
