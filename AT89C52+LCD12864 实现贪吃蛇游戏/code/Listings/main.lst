@@ -1,0 +1,41 @@
+C51 COMPILER V9.59.0.0   MAIN                                                              12/09/2019 23:55:14 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\Keil C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\mai
+                    -n.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "game.h"
+   2                  
+   3          void main(){
+   4   1              //初始化
+   5   1              init();
+   6   1              
+   7   1              while(1){
+   8   2                      unsigned char ch = Game_Menu();//画出初始游戏界面
+   9   2                      if(ch == SYS_EASY)
+  10   2                              Sys_Easy();
+  11   2                      if(ch == SYS_HARD)
+  12   2                              Sys_Hard();
+  13   2                      if(ch == SYS_TIPS)
+  14   2                              Sys_Tips();
+  15   2              }
+  16   1      }
+  17          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2360    ----
+   CONSTANT SIZE    =    186    ----
+   XDATA SIZE       =   ----     100
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     16      45
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      2       3
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

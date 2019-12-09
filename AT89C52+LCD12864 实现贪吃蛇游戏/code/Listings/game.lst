@@ -1,0 +1,635 @@
+C51 COMPILER V9.59.0.0   GAME                                                              12/09/2019 21:01:09 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE GAME
+OBJECT MODULE PLACED IN .\Objects\game.obj
+COMPILER INVOKED BY: D:\Keil C51\C51\BIN\C51.EXE game.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\gam
+                    -e.lst) OBJECT(.\Objects\game.obj)
+
+line level    source
+
+   1          // 转场动画
+   2          void change_Screen(){
+   3   1              LCD_Clear_DDRAM();
+*** WARNING C206 IN LINE 3 OF game.c: 'LCD_Clear_DDRAM': missing function-prototype
+   4   1              LCD_Write_Strs(0x88, " Please wait...", 15);
+*** WARNING C206 IN LINE 4 OF game.c: 'LCD_Write_Strs': missing function-prototype
+*** ERROR C267 IN LINE 4 OF game.c: 'LCD_Write_Strs': requires ANSI-style prototype
+   5   1              LCD_Draw_Clear();
+   6   1              LCD_Clear_DDRAM();
+   7   1      }
+   8          
+   9          //初始化
+  10          void init(){
+  11   1              /* 
+  12   1                      #define _MALLOC_MEM_ xdata
+  13   1                      51由于没有操作系统，需要分配为动态内存的区间并不清楚
+  14   1                      需要头文件<stdlib.h>故需调用init_mempool来初始化内存池
+  15   1              */
+  16   1              unsigned char _MALLOC_MEM_ memoryTempt[150];    //随机分配一个数组,用于初始化内存池，xdata区域
+  17   1              init_mempool(memoryTempt, sizeof(memoryTempt)); //初始化内存池
+  18   1              
+  19   1              LCD_Init();                                                                             //初始化LCD, 8位并口
+  20   1              Timer_Set();//初始化定时器0
+  21   1              Snake_Init(&snake);                                                             //初始化蛇
+  22   1      }
+  23          
+  24          // 简单系统
+  25          void Sys_Easy(){
+  26   1              change_Screen();
+  27   1              while(!PressRet){
+  28   2                      delay(snake_speed);//延时,控制蛇走的快慢
+  29   2                      
+  30   2                      snakeRear = SnakeMove(&snake, &FruitLocation);//让蛇移动一格,并且取出蛇尾的坐标
+  31   2                      
+  32   2                      if(FruitLocation.Y == 100){
+  33   3                              //说明Game_Over
+  34   3                              FruitLocation.Y = 99;
+  35   3                              continue;//下面语句不执行,直接进行新一次循环
+  36   3                      }else if(FruitLocation.Y == 200){
+  37   3                              //说明吃到果实了
+  38   3                              FruitFlag = 0;//清空果实存在标志位
+  39   3                              snake_speed -= 300;//每吃到一个果实,蛇的速度加快
+  40   3                      }
+  41   2                      
+  42   2                      //判断是否要新生成一个果实
+  43   2                      if(FruitFlag == 0){
+  44   3                              Key_Scan();//按键扫描函数
+  45   3                              LCD_Draw_Fruit(&FruitLocation, &snake);//生成新的果实,并画出来
+  46   3                              Key_Scan();//按键扫描函数
+  47   3                              
+  48   3                              continue;//由于蛇尾不再擦除,而且蛇头也不需要重画,所以下面语句不执行,直接进行新一次循环
+  49   3                      }
+  50   2                      
+  51   2                      Key_Scan();//按键扫描函数
+C51 COMPILER V9.59.0.0   GAME                                                              12/09/2019 21:01:09 PAGE 2   
+
+  52   2                      
+  53   2                      LCD_Draw_Snake(&snake, &snakeRear);//更新蛇的位置
+  54   2              }
+  55   1              PressRet = 0;
+  56   1      }
+  57          
+  58          // 困难系统
+  59          void Sys_Hard(){
+  60   1              change_Screen();
+  61   1              while(!PressRet){
+  62   2                      delay(snake_speed);//延时,控制蛇走的快慢
+  63   2                      
+  64   2                      snakeRear = SnakeMove(&snake, &FruitLocation);//让蛇移动一格,并且取出蛇尾的坐标
+  65   2                      
+  66   2                      if(FruitLocation.Y == 100){
+  67   3                              //说明Game_Over
+  68   3                              FruitLocation.Y = 99;
+  69   3                              continue;//下面语句不执行,直接进行新一次循环
+  70   3                      }else if(FruitLocation.Y == 200){
+  71   3                              //说明吃到果实了
+  72   3                              FruitFlag = 0;//清空果实存在标志位
+  73   3                              snake_speed -= 300;//每吃到一个果实,蛇的速度加快
+  74   3                      }
+  75   2                      
+  76   2                      //判断是否要新生成一个果实
+  77   2                      if(FruitFlag == 0){
+  78   3                              Inv_Key_Scan();//按键扫描函数
+  79   3                              LCD_Draw_Fruit(&FruitLocation, &snake);//生成新的果实,并画出来
+  80   3                              Inv_Key_Scan();//按键扫描函数
+  81   3                              
+  82   3                              continue;//由于蛇尾不再擦除,而且蛇头也不需要重画,所以下面语句不执行,直接进行新一次循环
+  83   3                      }
+  84   2                      
+  85   2                      Inv_Key_Scan();//按键扫描函数
+  86   2                      
+  87   2                      LCD_Draw_Snake(&snake, &snakeRear);//更新蛇的位置
+  88   2              }
+  89   1              PressRet = 0;
+  90   1      }
+  91          
+  92          // 提示系统
+  93          void Sys_Tips(){
+  94   1              LCD_Clear_DDRAM();
+  95   1              LCD_Write_Strs(0x80, "|-----Tips-----|", 16);           // The-OdD-SnAKee 
+  96   1          LCD_Write_Strs(0x90, "| fmw-lyx-zgt  |", 16);               //      easy
+  97   1          LCD_Write_Strs(0x88, "|--------------|", 16);               //   -> hard
+  98   1          LCD_Write_Strs(0x98, "     ->ok", 9);                               //      tips
+  99   1      
+ 100   1              while(1){
+ 101   2                      if(Key_Return == 0 || Key_Enter == 0){
+ 102   3                              Delay_1ms(20);
+ 103   3                              if(Key_Return == 0 || Key_Enter == 0){
+ 104   4                                      while(!Key_Return || !Key_Enter);
+ 105   4                                      break;
+ 106   4                              }
+ 107   3                      }
+ 108   2              }
+ 109   1      }
+ 110          
+ 111          void delay(unsigned int time)//延时函数
+ 112          {
+ 113   1              while(--time){
+C51 COMPILER V9.59.0.0   GAME                                                              12/09/2019 21:01:09 PAGE 3   
+
+ 114   2                      Key_Scan();
+ 115   2              }
+ 116   1      }
+ 117          
+ 118          //按键扫描函数
+ 119          void Key_Scan(){
+ 120   1              if(Key_Up == 0){
+ 121   2                      Delay_1ms(1);
+ 122   2                      if(Key_Up == 0){
+ 123   3                              if(snake_towds != TOWDS_DOWN){
+ 124   4                                      snake_towds = TOWDS_UP;
+ 125   4                              }
+ 126   3                      }
+ 127   2              }
+ 128   1              if(Key_Down == 0){
+ 129   2                      Delay_1ms(1);
+ 130   2                      if(Key_Down == 0){
+ 131   3                              if(snake_towds != TOWDS_UP){
+ 132   4                                      snake_towds = TOWDS_DOWN;
+ 133   4                              }
+ 134   3                      }
+ 135   2              }
+ 136   1              if(Key_Left == 0){
+ 137   2                      Delay_1ms(1);
+ 138   2                      if(Key_Left == 0){
+ 139   3                              if(snake_towds != TOWDS_RIGHT){
+ 140   4                                      snake_towds = TOWDS_LEFT;
+ 141   4                              }
+ 142   3                      }
+ 143   2              }
+ 144   1              if(Key_Right == 0){
+ 145   2                      Delay_1ms(1);
+ 146   2                      if(Key_Right == 0){
+ 147   3                              if(snake_towds != TOWDS_LEFT){
+ 148   4                                      snake_towds = TOWDS_RIGHT;
+ 149   4                              }
+ 150   3                      }
+ 151   2              }
+ 152   1              if(Key_Return == 0){
+ 153   2                      PressRet = 1;
+ 154   2              }
+ 155   1              if(Key_Pause == 0){
+ 156   2                      Delay_1ms(20);
+ 157   2                      if(Key_Pause == 0){
+ 158   3                              if(PressPause == 0){
+ 159   4                                      LCD_Write_Strs(0x90, "Press the Pause", 15);
+ 160   4                                      LCD_Write_Strs(0x89, "for Continue...", 15);
+ 161   4                                      while(!Key_Pause);
+ 162   4                                      PressPause = 1;
+ 163   4                                      while(PressPause && !PressRet){
+ 164   5                                              Key_Scan();
+ 165   5                                      }
+ 166   4                                      PressRet = 0;
+ 167   4                              } else {
+ 168   4                                      LCD_Clear_DDRAM();
+ 169   4                                      while(!Key_Pause);
+ 170   4                                      PressPause = 0;
+ 171   4                              }
+ 172   3                      }
+ 173   2              }
+ 174   1      }
+ 175          
+C51 COMPILER V9.59.0.0   GAME                                                              12/09/2019 21:01:09 PAGE 4   
+
+ 176          //困难模式的按键扫描函数
+ 177          void Inv_Key_Scan(){
+ 178   1              if(Key_Up == 0){
+ 179   2                      Delay_1ms(1);
+ 180   2                      if(Key_Up == 0){
+ 181   3                              if(snake_towds != TOWDS_UP){
+ 182   4                                      snake_towds = TOWDS_DOWN;
+ 183   4                              }
+ 184   3                      }
+ 185   2              }
+ 186   1              if(Key_Down == 0){
+ 187   2                      Delay_1ms(1);
+ 188   2                      if(Key_Down == 0){
+ 189   3                              if(snake_towds != TOWDS_DOWN){
+ 190   4                                      snake_towds = TOWDS_UP;
+ 191   4                              }
+ 192   3                      }
+ 193   2              }
+ 194   1              if(Key_Left == 0){
+ 195   2                      Delay_1ms(1);
+ 196   2                      if(Key_Left == 0){
+ 197   3                              if(snake_towds != TOWDS_LEFT){
+ 198   4                                      snake_towds = TOWDS_RIGHT;
+ 199   4                              }
+ 200   3                      }
+ 201   2              }
+ 202   1              if(Key_Right == 0){
+ 203   2                      Delay_1ms(1);
+ 204   2                      if(Key_Right == 0){
+ 205   3                              if(snake_towds != TOWDS_RIGHT){
+ 206   4                                      snake_towds = TOWDS_LEFT;
+ 207   4                              }
+ 208   3                      }
+ 209   2              }
+ 210   1              if(Key_Return == 0){
+ 211   2                      PressRet = 1;
+ 212   2              }
+ 213   1              if(Key_Pause == 0){
+ 214   2                      Delay_1ms(20);
+ 215   2                      if(Key_Pause == 0){
+ 216   3                              if(PressPause == 0){
+ 217   4                                      LCD_Write_Strs(0x90, "Press the Pause", 15);
+ 218   4                                      LCD_Write_Strs(0x89, "for Continue...", 15);
+ 219   4                                      while(!Key_Pause);
+ 220   4                                      PressPause = 1;
+ 221   4                                      while(PressPause && !PressRet){
+ 222   5                                              Key_Scan();
+ 223   5                                      }
+ 224   4                                      PressRet = 0;
+ 225   4                              } else {
+ 226   4                                      LCD_Clear_DDRAM();
+ 227   4                                      while(!Key_Pause);
+ 228   4                                      PressPause = 0;
+ 229   4                              }
+ 230   3                      }
+ 231   2              }
+ 232   1      }
+ 233          
+ 234          //定时器设置函数
+ 235          void Timer_Set(){
+ 236   1              //开启总中断允许
+ 237   1              EA = 1;
+C51 COMPILER V9.59.0.0   GAME                                                              12/09/2019 21:01:09 PAGE 5   
+
+ 238   1              //打开定时器0允许
+ 239   1              ET0 = 1;
+ 240   1              //设置定时器的工作方式寄存器TCON
+ 241   1              TMOD = 0x01;
+ 242   1              //设置定时器初值
+ 243   1              TH0 = 0;
+ 244   1              TL0 = 0;
+ 245   1              //最后用TCON寄存器里面的TR0来开启定时器
+ 246   1              TR0 = 1;
+ 247   1      }
+ 248          
+ 249          //定时器 0 的中断服务函数
+ 250          void TimerInterrupt() interrupt 1{
+ 251   1              //设置定时器初值
+ 252   1              TH0 = 0;
+ 253   1              TL0 = 0;
+ 254   1              //初始化种子自增
+ 255   1              ++InitSeed;
+ 256   1      }
+ 257          
+ 258          //在任意位置画出整条蛇
+ 259          void LCD_Draw_Snake(Snake *snake, Point *ClearLocation){
+ 260   1              //遍历这条蛇
+ 261   1              SnakeNode *p;   //定义一个指针,用于遍历这条蛇
+ 262   1              
+ 263   1              for(p=snake->front; p!=NULL; p=p->next){
+ 264   2                      //根据当前节点的坐标画出正方形
+ 265   2                      LCD_Draw_Square(p->Location.X, p->Location.Y, 1);
+ 266   2              }
+ 267   1              
+ 268   1              //再根据擦除位置的坐标擦除一个正方形
+ 269   1              //说明没有吃到果实,此时擦除蛇尾
+ 270   1              if(FruitFlag != 0){
+ 271   2                      LCD_Draw_Square(ClearLocation->X, ClearLocation->Y, 0);
+ 272   2              }
+ 273   1      }
+ 274          
+ 275          //画出游戏初始界面
+ 276          unsigned char Game_Menu(){
+ 277   1              unsigned char i = 0;
+ 278   1              unsigned char ch = SYS_HARD;
+ 279   1              unsigned char code str_point[] = "   ->";
+ 280   1              unsigned char code str_point_null[] = "     ";
+ 281   1              change_Screen();
+ 282   1              
+ 283   1              //写入菜单
+ 284   1              LCD_Write_Strs(0x80, " The-OdD-SnAKee", 15);
+ 285   1              LCD_Write_Strs(0x90, "      easy", 10);
+ 286   1              LCD_Write_Strs(0x88, "   -> hard", 10);
+ 287   1              LCD_Write_Strs(0x98, "      tips", 10);
+ 288   1              
+ 289   1              while(1){
+ 290   2                      //选择 easy
+ 291   2                      if(ch == SYS_EASY){
+ 292   3                              // 按↑无反应
+ 293   3                              // 按↓响应
+ 294   3                              if(Key_Down == 0){
+ 295   4                                      Delay_1ms(5);
+ 296   4                                      if(Key_Down == 0){
+ 297   5                                              ch = SYS_HARD;
+ 298   5                                              LCD_Write_Strs(0x90, str_point_null, 5);
+ 299   5                                              LCD_Write_Strs(0x88, str_point, 5);
+C51 COMPILER V9.59.0.0   GAME                                                              12/09/2019 21:01:09 PAGE 6   
+
+ 300   5                                              while(!Key_Down);
+ 301   5                                      }
+ 302   4                              }
+ 303   3                      }
+ 304   2                      // 选择 hard
+ 305   2                      if(ch == SYS_HARD){
+ 306   3                              // 按↑响应
+ 307   3                              if(Key_Up == 0){
+ 308   4                                      Delay_1ms(5);
+ 309   4                                      if(Key_Up == 0){
+ 310   5                                              ch = SYS_EASY;
+ 311   5                                              LCD_Write_Strs(0x88, str_point_null, 5);
+ 312   5                                              LCD_Write_Strs(0x90, str_point, 5);
+ 313   5                                              while(!Key_Up);
+ 314   5                                      }
+ 315   4                              }
+ 316   3                              // 按↓响应
+ 317   3                              if(Key_Down == 0){
+ 318   4                                      Delay_1ms(5);
+ 319   4                                      if(Key_Down == 0){
+ 320   5                                              ch = SYS_TIPS;
+ 321   5                                              LCD_Write_Strs(0x88, str_point_null, 5);
+ 322   5                                              LCD_Write_Strs(0x98, str_point, 5);
+ 323   5                                              while(!Key_Down);
+ 324   5                                      }
+ 325   4                              }
+ 326   3                      }
+ 327   2                      // 选择 tips
+ 328   2                      if(ch == SYS_TIPS){
+ 329   3                              // 按↑响应
+ 330   3                              // 按↓无反应
+ 331   3                              if(Key_Up == 0){
+ 332   4                                      Delay_1ms(20);
+ 333   4                                      if(Key_Up == 0){
+ 334   5                                              ch = SYS_HARD;
+ 335   5                                              LCD_Write_Strs(0x98, str_point_null, 5);
+ 336   5                                              LCD_Write_Strs(0x88, str_point, 5);
+ 337   5                                              while(!Key_Up);
+ 338   5                                      }
+ 339   4                              }
+ 340   3                      }
+ 341   2                      //只有当按下"开始"键时,游戏才会开始
+ 342   2                      if(Key_Enter == 0){
+ 343   3                              Delay_1ms(5);
+ 344   3                              if(Key_Enter == 0){                     
+ 345   4                                      //用随机数产生果实,其中随机数的种子用定时器获取,按下了"开始"键后产生种子,之后种子不再改变
+ 346   4                                      srand(InitSeed);//初始化种子
+ 347   4                                      //产生种子之后定时器0就可以关掉了
+ 348   4                                      TR0 = 0;
+ 349   4                                      while(!Key_Enter);
+ 350   4                                      //退出死循环
+ 351   4                                      return ch;
+ 352   4                              }
+ 353   3                      }
+ 354   2              }
+ 355   1      }
+ 356          
+ 357          //画出游戏失败的画面
+ 358          void Game_Over(){
+ 359   1              unsigned int i = 0;//用于for循环
+ 360   1              
+ 361   1              //清空游戏界面,即清空DDRAM
+C51 COMPILER V9.59.0.0   GAME                                                              12/09/2019 21:01:09 PAGE 7   
+
+ 362   1              LCD_Clear_DDRAM();
+ 363   1      
+ 364   1              //写入"Game_Over"
+ 365   1              LCD_Write_Strs(0x92, "GameOver", 8);
+ 366   1              
+ 367   1              //先写入"得分: "
+ 368   1              LCD_Write_Strs(0x8A, "score:", 6);
+ 369   1              
+ 370   1              //再写入分数
+ 371   1              LCD_WriteScore(snake.length);//写入分数的函数
+ 372   1              
+ 373   1              while(1){
+ 374   2                      //只有当按下"回车"键时,游戏才会开始
+ 375   2                      if(Key_Enter == 0 || Key_Return == 0){
+ 376   3                              Delay_1ms(10);
+ 377   3                              if(Key_Enter == 0 || Key_Return == 0){                  
+ 378   4                                      //之后将蛇销毁,并再次初始化
+ 379   4                                      Snake_Destroy(&snake);
+ 380   4                                      Snake_Init(&snake);
+ 381   4                                      
+ 382   4                                      //清空果实存在的标志
+ 383   4                                      FruitFlag = 0;
+ 384   4                                      
+ 385   4                                      //重新设置初始方向为向右
+ 386   4                                      snake_towds = TOWDS_RIGHT;
+ 387   4                                      
+ 388   4                                      while(!Key_Enter || !Key_Return);
+ 389   4                                      //退出死循环
+ 390   4                                      PressRet = 1;
+ 391   4                                      break;
+ 392   4                              }
+ 393   3                      }
+ 394   2              }
+ 395   1      }
+ 396          
+ 397          //检查蛇是否咬死自己
+ 398          bit CheckSnakeDead(Snake *snake, Point *elemNew){
+ 399   1              //定义一个指针,用于遍历整条蛇
+ 400   1              SnakeNode *p = snake->front->next->next;//最开始指向2号方块,0号为蛇头
+ 401   1              
+ 402   1              //由于蛇能咬到的最小的方块号是3号,所以从3号开始遍历
+ 403   1              if(snake->length < 4)
+ 404   1                      return 0;//0表示不会咬死
+ 405   1              else{
+ 406   2                      for(p; p!=NULL; p=p->next){
+ 407   3                              if((elemNew->X == p->Location.X) &&
+ 408   3                                 (elemNew->Y == p->Location.Y)){
+ 409   4                                      return 1;       //1表示会咬死自己
+ 410   4                              }
+ 411   3                      }
+ 412   2              }
+ 413   1              
+ 414   1              return 0;
+ 415   1      }
+ 416          
+ 417          //写入分数的函数
+ 418          void LCD_WriteScore(unsigned char Score){
+ 419   1              Score -= 2;//减掉初始长度2
+ 420   1              
+ 421   1              //写入分数时,要判断分数的位数
+ 422   1              if(Score < 10){
+ 423   2                      LCD_Write(MODE_DATA, '0');      //48即数字0
+C51 COMPILER V9.59.0.0   GAME                                                              12/09/2019 21:01:09 PAGE 8   
+
+ 424   2                      LCD_Write(MODE_DATA, Score + '0');
+ 425   2              }else{
+ 426   2                      unsigned char Score_H = Score / 10;
+ 427   2                      unsigned char Score_L = Score % 10;
+ 428   2                      
+ 429   2                      LCD_Write(MODE_DATA, Score_H + '0');
+ 430   2                      LCD_Write(MODE_DATA, Score_L + '0');
+ 431   2              }
+ 432   1      }
+ 433          
+ 434          //画出果实的函数
+ 435          void LCD_Draw_Fruit(Point *FruitLocation, Snake *snake_tempt){
+ 436   1              //定义一个指针,遍历整条蛇
+ 437   1              SnakeNode *p;
+ 438   1              
+ 439   1              //定义一个标志位,用于表示生成的果实是否和蛇的身体重合,1表示重合
+ 440   1              bit FruitQualifiedFlag = 1;
+ 441   1              
+ 442   1              //判断生成的果实是否合格,不合格的话重新生成一个新果实
+ 443   1              while(FruitQualifiedFlag){
+ 444   2                      InitSeed = rand();      //新产生一个随机数
+ 445   2                      FruitLocation->X = (InitSeed % 63) * 2; //X 最大是124,并且必须是偶数
+ 446   2                      FruitLocation->Y = (InitSeed % 31) * 2; //Y 最大是60,并且必须是偶数
+ 447   2                      
+ 448   2                      for(p=snake_tempt->front; p!=NULL; p=p->next){
+ 449   3                              if((p->Location.X == FruitLocation->X) && 
+ 450   3                                       (p->Location.Y == FruitLocation->Y)){
+ 451   4                                      break;
+ 452   4                              }
+ 453   3                      }
+ 454   2                      
+ 455   2                      //出循环之后,如果此时 p 为 NULL,说明没有重复,如果p不为NULL,说明有重复
+ 456   2                      if(p == NULL){
+ 457   3                              FruitQualifiedFlag = 0;
+ 458   3                      }
+ 459   2              }
+ 460   1              
+ 461   1              LCD_Draw_Square(FruitLocation->X, FruitLocation->Y, 1);
+ 462   1              
+ 463   1              FruitFlag = 1;//画好果实后,标志位置位
+ 464   1      }
+ 465          
+ 466          //处理蛇的走动的函数
+ 467          Point SnakeMove(Snake *snake, Point *FruitLocation){
+ 468                  bit EatFruitFlag = 0;
+ 469                  bit Game_Over_Falg = 0;
+ 470                  Point elemNew;
+ 471                  
+ 472                  switch(snake_towds){
+ 473                          //向上:
+ 474                          case(TOWDS_UP): 
+ 475                                  //判断是否会撞墙导致游戏结束
+ 476                                  if(snake->front->Location.Y == 0){
+ 477                                          Game_Over_Falg = 1;
+ 478                                          Game_Over();
+ 479                                  }else{
+ 480                                          Key_Scan();
+ 481                                          //判断是否会吃到果实
+ 482                                          if((snake->front->Location.Y == FruitLocation->Y + 2) &&
+ 483                                              (snake->front->Location.X == FruitLocation->X)){
+ 484                                                  //吃到果实
+ 485                                                  EatFruitFlag = 1;
+C51 COMPILER V9.59.0.0   GAME                                                              12/09/2019 21:01:09 PAGE 9   
+
+ 486                                          }
+ 487                                          elemNew.X = snake->front->Location.X;
+ 488                                          elemNew.Y = snake->front->Location.Y - 2;
+ 489          
+ 490                                          //判断是否会咬死自己导致游戏结束,.但是前提条件是蛇的长度大于3
+ 491                                          if(((snake->length) >= 4) && (CheckSnakeDead(snake, &elemNew) == 1)){
+ 492                                                  //检查蛇是否咬死自己,如果会咬死自己上面的函数会返回1
+ 493                                                  Game_Over_Falg = 1;
+ 494                                                  Game_Over();
+ 495                                          }
+ 496                                  }
+ 497                                  break;
+ 498                          //向下:
+ 499                          case(TOWDS_DOWN):
+ 500                                  //判断是否会撞墙导致游戏结束
+ 501                                  if (snake->front->Location.Y == 62){
+ 502                                          Game_Over_Falg = 1;
+ 503                                          Game_Over();
+ 504                                  }else{
+ 505                                          Key_Scan();
+ 506                                          //判断是否会吃到果实
+ 507                                          if((snake->front->Location.Y == FruitLocation->Y - 2) &&
+ 508                                              (snake->front->Location.X == FruitLocation->X)){
+ 509                                                  //吃到果实
+ 510                                                  EatFruitFlag = 1;
+ 511                                          }
+ 512                                          elemNew.X = snake->front->Location.X;
+ 513                                          elemNew.Y = snake->front->Location.Y + 2;
+ 514                                          
+ 515                                          //判断是否会咬死自己导致游戏结束,.但是前提条件是蛇的长度大于3
+ 516                                          if(((snake->length) >= 4) && (CheckSnakeDead(snake, &elemNew) == 1)){
+ 517                                                  //检查蛇是否咬死自己,如果会咬死自己上面的函数会返回1
+ 518                                                  Game_Over_Falg = 1;
+ 519                                                  Game_Over();
+ 520                                          }
+ 521                                  }
+ 522                                  break;
+ 523                          //向左:
+ 524                          case(TOWDS_LEFT):
+ 525                                  //判断是否会撞墙导致游戏结束
+ 526                                  if((snake->front->Location.X == 0 ) || 
+ 527                                      (snake->front->Location.X == 128)){
+ 528                                          Game_Over_Falg = 1;
+ 529                                          Game_Over();
+ 530                                  }else{
+ 531                                          Key_Scan();
+ 532                                          //判断是否会吃到果实
+ 533                                          if((snake->front->Location.Y == FruitLocation->Y) &&
+ 534                                              (snake->front->Location.X == FruitLocation->X + 2)){
+ 535                                                  //吃到果实
+ 536                                                  EatFruitFlag = 1;
+ 537                                          }
+ 538                                          elemNew.X = snake->front->Location.X - 2;
+ 539                                          elemNew.Y = snake->front->Location.Y;
+ 540                                          
+ 541                                          //判断是否会咬死自己导致游戏结束,.但是前提条件是蛇的长度大于3
+ 542                                          if(((snake->length) >= 4) && (CheckSnakeDead(snake, &elemNew) == 1)){
+ 543                                                  //检查蛇是否咬死自己,如果会咬死自己上面的函数会返回1
+ 544                                                  Game_Over_Falg = 1;
+ 545                                                  Game_Over();
+ 546                                          }
+ 547                                  }
+C51 COMPILER V9.59.0.0   GAME                                                              12/09/2019 21:01:09 PAGE 10  
+
+ 548                                  break;
+ 549                          //向右
+ 550                          case(TOWDS_RIGHT):
+ 551                                  //判断是否会撞墙导致游戏结束
+ 552                                  if((snake->front->Location.X == 126) || 
+ 553                                      (snake->front->Location.X == 254)){
+ 554                                          Game_Over_Falg = 1;
+ 555                                          Game_Over();
+ 556                                  }else{
+ 557                                          Key_Scan();
+ 558                                          //判断是否会吃到果实
+ 559                                          if((snake->front->Location.Y == FruitLocation->Y) &&
+ 560                                              (snake->front->Location.X == FruitLocation->X - 2)){
+ 561                                                  //吃到果实
+ 562                                                  EatFruitFlag = 1;
+ 563                                          }
+ 564                                          elemNew.X = snake->front->Location.X + 2;
+ 565                                          elemNew.Y = snake->front->Location.Y;
+ 566                                          
+ 567                                          //判断是否会咬死自己导致游戏结束,.但是前提条件是蛇的长度大于3
+ 568                                          if(((snake->length) >= 4) && (CheckSnakeDead(snake, &elemNew) == 1)){
+ 569                                                  //检查蛇是否咬死自己,如果会咬死自己上面的函数会返回1
+ 570                                                  Game_Over_Falg = 1;     
+ 571                                                  Game_Over();
+ 572                                          }
+ 573                                  }
+ 574                                  break;
+ 575                          default:
+ 576                                  break;
+ 577                  }
+ 578                  
+ 579                  //判断是否游戏结束
+ 580                  if(Game_Over_Falg == 1){
+ 581                          FruitLocation->Y = 100;//正常情况下Y最大62
+ 582                          elemNew.X = elemNew.Y = 0;//其实此处赋值也是无效的
+ 583                          
+ 584                          return elemNew;//其实这里返回也是无效的,因为返回之后用不到这个数据
+ 585                  }else{
+ 586                          Key_Scan();//按键扫描函数
+ 587                          
+ 588                          //首先根据蛇头的朝向在蛇头插入新结点
+ 589                          Insert_At_Snake_Front(snake, &elemNew);//并不画出来,只是在数据层面加上蛇头
+ 590                          
+ 591                          //EatFruitFlag = 1 说明吃到了果实
+ 592                          if (EatFruitFlag == 1){
+ 593                                  FruitLocation->Y = 200;//正常情况下Y最大62
+ 594                                  elemNew.X = elemNew.Y = 0;//其实此处赋值也是无效的
+ 595                                  
+ 596                                  return elemNew;//其实这里返回也是无效的,因为返回之后用不到这个数据
+ 597                          }else{
+ 598                                  //释放掉一个尾节点
+ 599                                  return Remove_At_Snake_Rear(snake);
+ 600                          }
+ 601                  }
+ 602          }
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  1 ERROR(S)

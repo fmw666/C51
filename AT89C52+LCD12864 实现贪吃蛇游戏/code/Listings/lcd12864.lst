@@ -1,0 +1,224 @@
+C51 COMPILER V9.59.0.0   LCD12864                                                          12/09/2019 23:55:14 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE LCD12864
+OBJECT MODULE PLACED IN .\Objects\lcd12864.obj
+COMPILER INVOKED BY: D:\Keil C51\C51\BIN\C51.EXE lcd12864.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings
+                    -\lcd12864.lst) OBJECT(.\Objects\lcd12864.obj)
+
+line level    source
+
+   1          #include "lcd12864.h"
+   2          #include "intrins.h"
+   3          
+   4          void Delay_1ms(unsigned int n){
+   5   1          unsigned char i;
+   6   1              unsigned char cnt = 0;
+   7   1          for(i=1; i<=n; i++)
+   8   1                      while(cnt < 250) 
+   9   1                              cnt++;
+  10   1      }
+  11          
+  12          //等待忙标志函数
+  13          void LCD_Check_Busy(){
+  14   1              LCD_DATA = 0xff;
+  15   1              LCD_EN = 0;                             //确保使能端为低电平
+  16   1              LCD_RS = 0;                             //1为数据，0为命令
+  17   1              LCD_RW = 1;                             //1为从12864读取，0为向12864写入
+  18   1              LCD_EN = 1;
+  19   1              
+  20   1              while(LCD_DATA & 0x80); //忙状态检测
+  21   1              LCD_EN = 0;
+  22   1      }
+  23          
+  24          //并口模式初始化函数
+  25          void LCD_Init(){
+  26   1              LCD_Write(MODE_CMD, 0x30);      //基本指令集,8位并行
+  27   1              LCD_Write(MODE_CMD, 0x01);      //清除显示DDRAM
+  28   1              LCD_Write(MODE_CMD, 0x06);      //启始点设定：光标右移
+  29   1              LCD_Write(MODE_CMD, 0x0C);      //显示状态开关：整体显示开，光标显示关，光标显示反白�
+             -��
+  30   1              LCD_Write(MODE_CMD, 0x02);      //地址归零
+  31   1      }
+  32          
+  33          //并口写入函数
+  34          void LCD_Write(unsigned char Write_Mode, unsigned char Data_Command){
+  35   1      /*
+  36   1              LCD_Check_Busy();
+  37   1              LCD_EN = 0;                                     //确保使能端为低电平
+  38   1              LCD_RS = Write_Mode;            //1为写入数据，0为写入命令
+  39   1              LCD_RW = 0;                                     //1为从12864读取，0为向12864写入
+  40   1              
+  41   1              LCD_DATA = Data_Command;
+  42   1              LCD_EN = 1;
+  43   1              Delay_1ms(1);
+  44   1              LCD_EN = 0;
+  45   1      */
+  46   1              LCD_Check_Busy();
+  47   1              LCD_RS = Write_Mode;
+  48   1              LCD_RW = 0;
+  49   1              LCD_EN = 0;
+  50   1              LCD_DATA = Data_Command;
+  51   1              _nop_();
+  52   1              _nop_();
+  53   1              LCD_EN = 1;
+C51 COMPILER V9.59.0.0   LCD12864                                                          12/09/2019 23:55:14 PAGE 2   
+
+  54   1              _nop_();
+  55   1              _nop_();
+  56   1              LCD_EN = 0;
+  57   1              LCD_RW = 1;
+  58   1              LCD_RS = 1;
+  59   1      
+  60   1      }
+  61          
+  62          //读取RAM中相应数据,1为读取数据,0为读取命令(即忙标志)
+  63          unsigned char LCD_Read(unsigned char Read_Mode){
+  64   1              unsigned char Data_Command;
+  65   1              LCD_Check_Busy();                               //等待忙标志函数
+  66   1              LCD_DATA = 0xff;                                //由于IO口是准双向,所以读取之前先写入高电平
+  67   1              LCD_RS = Read_Mode;                             //1为读取数据，0为读取命令,读命令读的是忙标志和此时光标�
+             -�位置
+  68   1              LCD_RW = 1;                                             //1为从12864读取，0为向12864写入
+  69   1              LCD_EN = 0;
+  70   1              LCD_EN = 1;
+  71   1              Data_Command = LCD_DATA;
+  72   1              LCD_EN = 0;
+  73   1              
+  74   1              return Data_Command;
+  75   1      }
+  76          
+  77          void LCD_Write_Strs(unsigned char addr, unsigned char *str, unsigned char count){
+  78   1              unsigned char i;
+  79   1              LCD_Write(MODE_CMD, 0x30);
+  80   1              LCD_Write(MODE_CMD, addr);      //设定DDRAM地址
+  81   1              for(i=0; i<count; i++){ 
+  82   2                      LCD_Write(MODE_DATA, str[i]);
+  83   2          }
+  84   1      }
+  85          
+  86          //清空DDRAM显示
+  87          void LCD_Clear_DDRAM(){
+  88   1              LCD_Write(MODE_CMD, 0x01);//清空显示命令,即将DDRAM填满20H(20H就是空格)
+  89   1      }
+  90          
+  91          
+  92          //清空绘图RAM的函数
+  93          void LCD_Draw_Clear(){
+  94   1              unsigned char i=0, j=0, k=0;
+  95   1      
+  96   1              LCD_Write(MODE_CMD, 0x34);//开启拓展指令集
+  97   1              LCD_Write(MODE_CMD, 0x36);//开启GDRAM显示,,即显示绘图RAM,不显示字符RAM
+  98   1              
+  99   1              //分上下两屏写
+ 100   1          for(i=0; i<2; i++){
+ 101   2                      //每个屏有32行,每个半屏都是1到32行,但是横坐标不一样
+ 102   2              for(j=0; j<32; j++){
+ 103   3                  LCD_Write(MODE_CMD, 0x80 + j);//写Y坐标,即选择第几行
+ 104   3                              //选择上下屏幕
+ 105   3                  if(i == 0){
+ 106   4                      LCD_Write(MODE_CMD, 0x80);//选择上半屏幕,横坐标是:0X80到0X87
+ 107   4                  }else{
+ 108   4                      LCD_Write(MODE_CMD, 0x88);//选择下半屏幕
+ 109   4                  }
+ 110   3                              
+ 111   3                              //写一整行数据
+ 112   3                  for(k=0; k<16; k++){
+ 113   4                      LCD_Write(MODE_DATA, 0x00) ;
+ 114   4                  }
+C51 COMPILER V9.59.0.0   LCD12864                                                          12/09/2019 23:55:14 PAGE 3   
+
+ 115   3              }
+ 116   2              }
+ 117   1              
+ 118   1          LCD_Write(MODE_CMD, 0x30);//关闭扩充指令集
+ 119   1      }
+ 120          
+ 121          
+ 122          //画一个点函数
+ 123          void LCD_Draw_Point(unsigned char location_x, unsigned char location_y, unsigned char DrawOrClear){
+ 124   1              //画一个点的思路:
+ 125   1              //首先要选好要显示的是是哪一块显示区域
+ 126   1              //选的方法就是先送入显示区域的纵坐标,再送入显示区域的横坐标
+ 127   1              
+ 128   1          //y指垂直地址, x指水平地址
+ 129   1              unsigned char location_x_port;                                          //指示当前横坐标的数据应该写入第几块(每16位一块)
+ 130   1              unsigned char Point_data_old_H;                                         //存储之前图片的数据的高八位
+ 131   1              unsigned char Point_data_old_L;                                         //存储之前图片的数据的低八位
+ 132   1      
+ 133   1              LCD_Write(MODE_CMD, 0x34);                                                      //开启拓展指令集
+ 134   1              LCD_Write(MODE_CMD, 0x36);                                                      //开启GDRAM显示,,即显示绘图RAM,不显示字符RAM
+ 135   1              
+ 136   1              //显示(location_x,location_y)这个点
+ 137   1              //先计算显示区域的纵坐标(0-63)
+ 138   1              //其中(0-31)是上半屏幕,(32-63)是下半屏幕
+ 139   1              
+ 140   1              //说明是下半屏幕
+ 141   1              //再计算显示区域的横坐标(0-127)
+ 142   1              if(location_y > 31){
+ 143   2                      location_y %= 32;                                                       // location_y 要对32取余
+ 144   2              }
+ 145   1              
+ 146   1              //再计算显示区域的横坐标(0-127)
+ 147   1              location_x_port = location_x / 16;                              //先计算要写入第几块
+ 148   1              
+ 149   1              LCD_Write(MODE_CMD, 0x80 + location_y);                 //显示区域的纵坐标,即第几行
+ 150   1              LCD_Write(MODE_CMD, 0x88 + location_x_port);    //横坐标:选择横坐标的第几块
+ 151   1              
+ 152   1              //有了坐标之后,取出此坐标处的旧图片数据
+ 153   1              //Point_data_old_H = LCD_Read(1);                                       //假读
+ 154   1              LCD_Read(1);                                                                    //假读
+ 155   1              Point_data_old_H = LCD_Read(1);
+ 156   1              Point_data_old_L = LCD_Read(1);
+ 157   1              
+ 158   1              LCD_Write(MODE_CMD, 0x80 + location_y);                 //显示区域的纵坐标,即第几行
+ 159   1              LCD_Write(MODE_CMD, 0x88 + location_x_port);    //横坐标:选择横坐标的第几块
+ 160   1              
+ 161   1              //上面之所有要再写入一遍地址,是因为第一次写入的是要读取的数据的地址
+ 162   1              //现在第二次写入的是要绘制的点的地址
+ 163   1      
+ 164   1      
+ 165   1              //下面计算出要向已经选好的显示区域写入的数据
+ 166   1              location_x %= 16;//首先 location_x 要对16取余
+ 167   1              
+ 168   1              if(location_x >= 8){
+ 169   2                      location_x %= 8;
+ 170   2              }       
+ 171   1              //这里要判断是擦除点还是画一个点
+ 172   1              if(DrawOrClear == 1){
+ 173   2                      LCD_Write(MODE_DATA, Point_data_old_H);
+ 174   2                      LCD_Write(MODE_DATA, (Point_data_old_L) | (0X80>>location_x));// ||:这个是逻辑或  |:这个才是�
+             -�位或运算
+ 175   2              }else{
+C51 COMPILER V9.59.0.0   LCD12864                                                          12/09/2019 23:55:14 PAGE 4   
+
+ 176   2                      LCD_Write(MODE_DATA, Point_data_old_H);
+ 177   2                      LCD_Write(MODE_DATA, (Point_data_old_L) & (~(0X80>>location_x)));
+ 178   2              }
+ 179   1              
+ 180   1              LCD_Write(MODE_CMD, 0x30);//关闭扩充指令集
+ 181   1      }
+ 182          
+ 183          //画一个2X2的正方形函数
+ 184          void LCD_Draw_Square(unsigned char location_x, unsigned char location_y, unsigned char DrawOrClear){
+ 185   1              LCD_Draw_Point(location_x, location_y, DrawOrClear);
+ 186   1              LCD_Draw_Point(location_x + 1, location_y, DrawOrClear);
+ 187   1              LCD_Draw_Point(location_x, location_y + 1, DrawOrClear);
+ 188   1              LCD_Draw_Point(location_x + 1, location_y + 1, DrawOrClear);
+ 189   1      }
+ 190          
+ 191          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    480    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       9
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

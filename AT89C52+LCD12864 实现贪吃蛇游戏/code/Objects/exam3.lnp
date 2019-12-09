@@ -1,0 +1,5 @@
+".\Objects\lcd12864.obj",
+".\Objects\main.obj",
+".\Objects\snake.obj" 
+TO ".\Objects\exam3" 
+PRINT(".\Listings\exam3.m51") RAMSIZE(256) 

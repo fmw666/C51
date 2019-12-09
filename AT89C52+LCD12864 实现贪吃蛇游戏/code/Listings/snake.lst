@@ -1,0 +1,120 @@
+C51 COMPILER V9.59.0.0   SNAKE                                                             12/09/2019 23:55:14 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE SNAKE
+OBJECT MODULE PLACED IN .\Objects\snake.obj
+COMPILER INVOKED BY: D:\Keil C51\C51\BIN\C51.EXE snake.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\sn
+                    -ake.lst) OBJECT(.\Objects\snake.obj)
+
+line level    source
+
+   1          #include "snake.h"
+   2          #include <stdio.h>
+   3          #include <stdlib.h>
+   4          
+   5          //初始化一条蛇
+   6          void Snake_Init(Snake *snake){
+   7   1              //初始化的蛇有两个结点
+   8   1              SnakeNode *pNew;
+   9   1              
+  10   1          pNew = (SnakeNode*)malloc(sizeof(SnakeNode));
+  11   1              snake->front = snake->rear = pNew;
+  12   1          snake->length = 1;
+  13   1              
+  14   1          pNew->next = NULL;
+  15   1              pNew->Location.X = 2;
+  16   1              pNew->Location.Y = 0;
+  17   1              
+  18   1              pNew = (SnakeNode*)malloc(sizeof(SnakeNode));
+  19   1              pNew->next = NULL;
+  20   1              pNew->Location.X = 0;
+  21   1              pNew->Location.Y = 0;
+  22   1              
+  23   1              snake->front->next = pNew;
+  24   1              snake->rear = pNew;
+  25   1              snake->length = 2;
+  26   1      }
+  27          
+  28          //销毁一条蛇
+  29          void Snake_Destroy(Snake *snake){
+  30   1              //释放掉所有的结点
+  31   1          SnakeNode *p = snake->front;
+  32   1          SnakeNode *q;
+  33   1      
+  34   1          while(p){
+  35   2              q = p->next;
+  36   2              free(p);
+  37   2              p = q;
+  38   2          }
+  39   1              
+  40   1          snake->rear = snake->front = NULL;
+  41   1          snake->length = 0;
+  42   1      }
+  43          
+  44          //在蛇头处插入一个结点
+  45          Status Insert_At_Snake_Front(Snake *snake, Point *elem){
+  46   1          SnakeNode *pNew;
+  47   1              
+  48   1          pNew = (SnakeNode*)malloc(sizeof(SnakeNode));//新开辟一个结点
+  49   1          
+  50   1              //对这个新结点进行赋值
+  51   1              pNew->next = NULL;//指针域赋值为空
+  52   1          pNew->Location.X = elem->X;//数据域赋值为结点坐标
+  53   1              pNew->Location.Y = elem->Y;
+  54   1              
+C51 COMPILER V9.59.0.0   SNAKE                                                             12/09/2019 23:55:14 PAGE 2   
+
+  55   1              //之后将新结点插入到蛇头处
+  56   1              pNew->next = snake->front;
+  57   1              //调整蛇头指针
+  58   1              snake->front = pNew;
+  59   1          //调整蛇身的长度
+  60   1          ++(snake->length);//长度加一
+  61   1      
+  62   1          return  OK;
+  63   1      }
+  64          
+  65          //在蛇尾处释放一个结点
+  66          Point Remove_At_Snake_Rear(Snake *snake){
+  67   1              Point ClearLocation;                                    //保存擦除的结点的坐标
+  68   1          SnakeNode *p = snake->front;                        //p最开始指向第一个结点
+  69   1              
+  70   1          //首先遍历找到蛇尾结点前的一个结点,由于游戏设定,蛇身长度不可能小于2
+  71   1              while(p->next != snake->rear){
+  72   2                      p = p->next;
+  73   2              }
+  74   1      
+  75   1              //退出上面的循环的时候,此时p指向尾结点的前一个结点
+  76   1              //释放结点之前,取出要被释放的结点的数据
+  77   1              ClearLocation.X = snake->rear->Location.X;
+  78   1              ClearLocation.Y = snake->rear->Location.Y;
+  79   1              
+  80   1              //现在释放蛇的尾结点
+  81   1          free(snake->rear);//释放蛇的尾结点
+  82   1      
+  83   1              //之后修改尾节点之前的那个结点的数据
+  84   1              p->next = NULL;
+  85   1              
+  86   1              //然后更新尾结点
+  87   1              snake->rear = p;
+  88   1              
+  89   1              //然后修改蛇身长度
+  90   1              --(snake->length);
+  91   1      
+  92   1          return ClearLocation;
+  93   1      }
+  94          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    714    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      32
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
