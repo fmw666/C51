@@ -40,7 +40,7 @@
 	|0x98|0x99|0x9A|0x9B|0x9C|0x9D|0x9E|0x9F|
 
     <div align="center">
-        <img src="pics/DDRAM.png" width=300>
+        <img src="pics/DDRAM.png" width=700>
     </div>
 		
 	- P0：8位并行数据线
@@ -52,13 +52,13 @@
 	读出此点的状态，然后再修改该点，最后送出去。即 读--修改--写
 
     <div align="center">
-        <img src="pics/GDRAM.png" width=300>
+        <img src="pics/GDRAM.png" width=700>
     </div>
 
 ### 项目使用手册
 
 <div align="center">
-    <img src="pics/EDA.jpg" width=500>
+    <img src="pics/EDA.jpg" width=1000>
 </div>
 
 > 立创 EDA 示意图
