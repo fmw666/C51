@@ -1,9 +1,9 @@
 #include "lcd12864.h"
 #include "snake.h"
-//³õÊ¼»¯ÄÚ´æ³Øº¯ÊıÒÔ¼°Ëæ»úÊıÉú³Éº¯Êı
+// åˆå§‹åŒ–å†…å­˜æ± å‡½æ•°ä»¥åŠéšæœºæ•°ç”Ÿæˆå‡½æ•°
 #include <stdlib.h>
 
-//---¼Ä´æÆ÷Î»ÉùÃ÷---//
+//---å¯„å­˜å™¨ä½å£°æ˜---//
 sbit Key_Up = P0^0;
 sbit Key_Down = P0^1;
 sbit Key_Left = P0^2;
@@ -12,7 +12,7 @@ sbit Key_Pause = P0^4;
 sbit Key_Enter = P0^5;
 sbit Key_Return = P0^6;
 
-//---ºê¶¨Òå³£Á¿---//
+//---å®å®šä¹‰å¸¸é‡---//
 #define SYS_EASY 1
 #define SYS_HARD 2
 #define SYS_TIPS 3
@@ -22,618 +22,617 @@ sbit Key_Return = P0^6;
 #define TOWDS_RIGHT 2
 #define TOWDS_LEFT 3
 
-//---È«¾Ö±äÁ¿ÉùÃ÷---//
-unsigned char snake_towds = TOWDS_RIGHT;						//ÉßÍ·µÄ³¯Ïò,Ä¬ÈÏ³¯ÓÒ TOWDS_RIGHT
-unsigned int snake_speed = 30000;								//Ğ¡ÉßÒÆ¶¯ËÙ¶È
+//---å…¨å±€å˜é‡å£°æ˜---//
+unsigned char snake_towds = TOWDS_RIGHT;  // è›‡å¤´çš„æœå‘,é»˜è®¤æœå³ TOWDS_RIGHT
+unsigned int snake_speed = 30000;         // å°è›‡ç§»åŠ¨é€Ÿåº¦
 Snake snake;
-Point snakeRear;												//ÉßÎ²µÄ×ø±ê
-Point FruitLocation;											//¹ûÊµµÄ×ø±ê
-unsigned char InitSeed = 0;										//³õÊ¼»¯ÖÖ×Ó£¬ÓÃÓÚ²úÉúËæ»úÊı
-unsigned char FruitFlag = 0;									//±íÊ¾¹ûÊµÊÇ·ñ»¹´æÔÚ
-bit PressRet = 0;												//Return°´¼üÊÇ·ñ±»°´ÏÂ
-bit PressPause = 0;												//Pause°´¼üÊÇ·ñ±»°´ÏÂ
+Point snakeRear;                          // è›‡å°¾çš„åæ ‡
+Point FruitLocation;                      // æœå®çš„åæ ‡
+unsigned char InitSeed = 0;               // åˆå§‹åŒ–ç§å­ï¼Œç”¨äºäº§ç”Ÿéšæœºæ•°
+unsigned char FruitFlag = 0;              // è¡¨ç¤ºæœå®æ˜¯å¦è¿˜å­˜åœ¨
+bit PressRet = 0;                         // ReturnæŒ‰é”®æ˜¯å¦è¢«æŒ‰ä¸‹
+bit PressPause = 0;                       // PauseæŒ‰é”®æ˜¯å¦è¢«æŒ‰ä¸‹
 
-//ÓÎÏ·Ïà¹Øº¯Êı
-void Timer_Set();												//¶¨Ê±Æ÷ÉèÖÃº¯Êı
-void delay(unsigned int time);									//ÑÓÊ±º¯Êı
-void Key_Scan();												//°´¼üÉ¨Ãèº¯Êı
-void Inv_Key_Scan();											//À§ÄÑÄ£Ê½ÏÂµÄ°´¼üÉ¨Ãè
-unsigned char Game_Menu();										//ÓÎÏ·³õÊ¼½çÃæ²Ëµ¥
-void Game_Over();												//ÓÎÏ·Ê§°Üºó½çÃæ
-bit Snake_Check_Dead(Snake *snake, Point *elemNew);				//¼ì²éÉßÊÇ·ñÒ§ËÀ×Ô¼º
-Point Snake_Move(Snake *snake, Point *FruitLocation);			//ÉßÏòÇ°ÒÆ¶¯Ò»¸öµ¥Î»
-void LCD_Draw_Snake(Snake *snake, Point *ClearLocation);		//ÔÚÈÎÒâÎ»ÖÃ»­Ò»ÌõÉß
-void LCD_Draw_Fruit(Point *FruitLocation, Snake *snake_tempt);	//ÔÚËæ»úÎ»ÖÃ»­³ö¹ûÊµ
-void LCD_Write_Score(unsigned char Score);						//Ğ´Èë·ÖÊı
-void Sys_Easy();												//ÓÎÏ·µÄ¼òµ¥Ä£Ê½
-void Sys_Hard();												//ÓÎÏ·µÄÀ§ÄÑÄ£Ê½
-void Sys_Tips();												//ÓÎÏ·µÄÌùÊ¿½çÃæ
+// æ¸¸æˆç›¸å…³å‡½æ•°
+void Timer_Set();                                               // å®šæ—¶å™¨è®¾ç½®å‡½æ•°
+void delay(unsigned int time);                                  // å»¶æ—¶å‡½æ•°
+void Key_Scan();                                                // æŒ‰é”®æ‰«æå‡½æ•°
+void Inv_Key_Scan();                                            // å›°éš¾æ¨¡å¼ä¸‹çš„æŒ‰é”®æ‰«æ
+unsigned char Game_Menu();                                      // æ¸¸æˆåˆå§‹ç•Œé¢èœå•
+void Game_Over();                                               // æ¸¸æˆå¤±è´¥åç•Œé¢
+bit Snake_Check_Dead(Snake *snake, Point *elemNew);             // æ£€æŸ¥è›‡æ˜¯å¦å’¬æ­»è‡ªå·±
+Point Snake_Move(Snake *snake, Point *FruitLocation);           // è›‡å‘å‰ç§»åŠ¨ä¸€ä¸ªå•ä½
+void LCD_Draw_Snake(Snake *snake, Point *ClearLocation);        // åœ¨ä»»æ„ä½ç½®ç”»ä¸€æ¡è›‡
+void LCD_Draw_Fruit(Point *FruitLocation, Snake *snake_tempt);  // åœ¨éšæœºä½ç½®ç”»å‡ºæœå®
+void LCD_Write_Score(unsigned char Score);                      // å†™å…¥åˆ†æ•°
+void Sys_Easy();                                                // æ¸¸æˆçš„ç®€å•æ¨¡å¼
+void Sys_Hard();                                                // æ¸¸æˆçš„å›°éš¾æ¨¡å¼
+void Sys_Tips();                                                // æ¸¸æˆçš„è´´å£«ç•Œé¢
 
-//¶¨Ê±Æ÷ÉèÖÃº¯Êı
+// å®šæ—¶å™¨è®¾ç½®å‡½æ•°
 void Timer_Set(){
-	EA = 1;														//¿ªÆô×ÜÖĞ¶ÏÔÊĞí
-	ET0 = 1;													//´ò¿ª¶¨Ê±Æ÷0ÔÊĞí
-	TMOD = 0x01;												//ÉèÖÃ¶¨Ê±Æ÷µÄ¹¤×÷·½Ê½¼Ä´æÆ÷TCON
-	TH0 = 0;													//ÉèÖÃ¶¨Ê±Æ÷³õÖµ
-	TL0 = 0;
-	TR0 = 1;													//×îºóÓÃTCON¼Ä´æÆ÷ÀïÃæµÄTR0À´¿ªÆô¶¨Ê±Æ÷
+    EA = 1;       // å¼€å¯æ€»ä¸­æ–­å…è®¸
+    ET0 = 1;      // æ‰“å¼€å®šæ—¶å™¨0å…è®¸
+    TMOD = 0x01;  // è®¾ç½®å®šæ—¶å™¨çš„å·¥ä½œæ–¹å¼å¯„å­˜å™¨TCON
+    TH0 = 0;      // è®¾ç½®å®šæ—¶å™¨åˆå€¼
+    TL0 = 0;
+    TR0 = 1;      // æœ€åç”¨TCONå¯„å­˜å™¨é‡Œé¢çš„TR0æ¥å¼€å¯å®šæ—¶å™¨
 }
 
-//¶¨Ê±Æ÷ 0 µÄÖĞ¶Ï·şÎñº¯Êı
+// å®šæ—¶å™¨ 0 çš„ä¸­æ–­æœåŠ¡å‡½æ•°
 void TimerInterrupt() interrupt 1{
-	TH0 = 0;
-	TL0 = 0;
-	++InitSeed;													//³õÊ¼»¯ÖÖ×Ó×ÔÔö
+    TH0 = 0;
+    TL0 = 0;
+    ++InitSeed;  // åˆå§‹åŒ–ç§å­è‡ªå¢
 }
 
-//ÑÓÊ±º¯Êı
-void delay(unsigned int time){				
-	while(--time){
-		Key_Scan();
-	}
+// å»¶æ—¶å‡½æ•°
+void delay(unsigned int time){
+    while(--time){
+        Key_Scan();
+    }
 }
 
-//°´¼üÉ¨Ãèº¯Êı
+// æŒ‰é”®æ‰«æå‡½æ•°
 void Key_Scan(){
-	if(Key_Up == 0){
-		Delay_1ms(1);
-		if(Key_Up == 0){
-			if(snake_towds != TOWDS_DOWN){
-				snake_towds = TOWDS_UP;
-			}
-		}
-	}
-	if(Key_Down == 0){
-		Delay_1ms(1);
-		if(Key_Down == 0){
-			if(snake_towds != TOWDS_UP){
-				snake_towds = TOWDS_DOWN;
-			}
-		}
-	}
-	if(Key_Left == 0){
-		Delay_1ms(1);
-		if(Key_Left == 0){
-			if(snake_towds != TOWDS_RIGHT){
-				snake_towds = TOWDS_LEFT;
-			}
-		}
-	}
-	if(Key_Right == 0){
-		Delay_1ms(1);
-		if(Key_Right == 0){
-			if(snake_towds != TOWDS_LEFT){
-				snake_towds = TOWDS_RIGHT;
-			}
-		}
-	}
-	if(Key_Return == 0){
-		PressRet = 1;
-	}
-	if(Key_Pause == 0){
-		Delay_1ms(20);
-		if(Key_Pause == 0){
-			if(PressPause == 0){
-				LCD_Write_Strs(0x90, "Press the Pause", 15);
-				LCD_Write_Strs(0x89, "for Continue...", 15);
-				while(!Key_Pause);
-				PressPause = 1;
-				while(PressPause && !PressRet){
-					Key_Scan();
-				}
-				PressRet = 0;
-			} else {
-				LCD_Clear_DDRAM();
-				while(!Key_Pause);
-				PressPause = 0;
-			}
-		}
-	}
+    if(Key_Up == 0){
+        Delay_1ms(1);
+        if(Key_Up == 0){
+            if(snake_towds != TOWDS_DOWN){
+                snake_towds = TOWDS_UP;
+            }
+        }
+    }
+    if(Key_Down == 0){
+        Delay_1ms(1);
+        if(Key_Down == 0){
+            if(snake_towds != TOWDS_UP){
+                snake_towds = TOWDS_DOWN;
+            }
+        }
+    }
+    if(Key_Left == 0){
+        Delay_1ms(1);
+        if(Key_Left == 0){
+            if(snake_towds != TOWDS_RIGHT){
+                snake_towds = TOWDS_LEFT;
+            }
+        }
+    }
+    if(Key_Right == 0){
+        Delay_1ms(1);
+        if(Key_Right == 0){
+            if(snake_towds != TOWDS_LEFT){
+                snake_towds = TOWDS_RIGHT;
+            }
+        }
+    }
+    if(Key_Return == 0){
+        PressRet = 1;
+    }
+    if(Key_Pause == 0){
+        Delay_1ms(20);
+        if(Key_Pause == 0){
+            if(PressPause == 0){
+                LCD_Write_Strs(0x90, "Press the Pause", 15);
+                LCD_Write_Strs(0x89, "for Continue...", 15);
+                while(!Key_Pause);
+                PressPause = 1;
+                while(PressPause && !PressRet){
+                    Key_Scan();
+                }
+                PressRet = 0;
+            }else{
+                LCD_Clear_DDRAM();
+                while(!Key_Pause);
+                PressPause = 0;
+            }
+        }
+    }
 }
 
-//À§ÄÑÄ£Ê½µÄ°´¼üÉ¨Ãèº¯Êı
+// å›°éš¾æ¨¡å¼çš„æŒ‰é”®æ‰«æå‡½æ•°
 void Inv_Key_Scan(){
-	if(Key_Up == 0){
-		Delay_1ms(1);
-		if(Key_Up == 0){
-			if(snake_towds != TOWDS_UP){
-				snake_towds = TOWDS_DOWN;
-			}
-		}
-	}
-	if(Key_Down == 0){
-		Delay_1ms(1);
-		if(Key_Down == 0){
-			if(snake_towds != TOWDS_DOWN){
-				snake_towds = TOWDS_UP;
-			}
-		}
-	}
-	if(Key_Left == 0){
-		Delay_1ms(1);
-		if(Key_Left == 0){
-			if(snake_towds != TOWDS_LEFT){
-				snake_towds = TOWDS_RIGHT;
-			}
-		}
-	}
-	if(Key_Right == 0){
-		Delay_1ms(1);
-		if(Key_Right == 0){
-			if(snake_towds != TOWDS_RIGHT){
-				snake_towds = TOWDS_LEFT;
-			}
-		}
-	}
-	if(Key_Return == 0){
-		PressRet = 1;
-	}
-	if(Key_Pause == 0){
-		Delay_1ms(20);
-		if(Key_Pause == 0){
-			if(PressPause == 0){
-				LCD_Write_Strs(0x90, "Press the Pause", 15);
-				LCD_Write_Strs(0x89, "for Continue...", 15);
-				while(!Key_Pause);
-				PressPause = 1;
-				while(PressPause && !PressRet){
-					Key_Scan();
-				}
-				PressRet = 0;
-			} else {
-				LCD_Clear_DDRAM();
-				while(!Key_Pause);
-				PressPause = 0;
-			}
-		}
-	}
+    if(Key_Up == 0){
+        Delay_1ms(1);
+        if(Key_Up == 0){
+            if(snake_towds != TOWDS_UP){
+                snake_towds = TOWDS_DOWN;
+            }
+        }
+    }
+    if(Key_Down == 0){
+        Delay_1ms(1);
+        if(Key_Down == 0){
+            if(snake_towds != TOWDS_DOWN){
+                snake_towds = TOWDS_UP;
+            }
+        }
+    }
+    if(Key_Left == 0){
+        Delay_1ms(1);
+        if(Key_Left == 0){
+            if(snake_towds != TOWDS_LEFT){
+                snake_towds = TOWDS_RIGHT;
+            }
+        }
+    }
+    if(Key_Right == 0){
+        Delay_1ms(1);
+        if(Key_Right == 0){
+            if(snake_towds != TOWDS_RIGHT){
+                snake_towds = TOWDS_LEFT;
+            }
+        }
+    }
+    if(Key_Return == 0){
+        PressRet = 1;
+    }
+    if(Key_Pause == 0){
+        Delay_1ms(20);
+        if(Key_Pause == 0){
+            if(PressPause == 0){
+                LCD_Write_Strs(0x90, "Press the Pause", 15);
+                LCD_Write_Strs(0x89, "for Continue...", 15);
+                while(!Key_Pause);
+                PressPause = 1;
+                while(PressPause && !PressRet){
+                    Key_Scan();
+                }
+                PressRet = 0;
+            }else{
+                LCD_Clear_DDRAM();
+                while(!Key_Pause);
+                PressPause = 0;
+            }
+        }
+    }
 }
-// ×ª³¡¶¯»­
+
+// è½¬åœºåŠ¨ç”»
 void change_Screen(){
-	LCD_Clear_DDRAM();
-	LCD_Write_Strs(0x88, " Please wait...", 15);
-	LCD_Draw_Clear();
-	LCD_Clear_DDRAM();
+    LCD_Clear_DDRAM();
+    LCD_Write_Strs(0x88, " Please wait...", 15);
+    LCD_Draw_Clear();
+    LCD_Clear_DDRAM();
 }
 
-//³õÊ¼»¯
+// åˆå§‹åŒ–
 void init(){
-	/* 
-		#define _MALLOC_MEM_ xdata
-		51ÓÉÓÚÃ»ÓĞ²Ù×÷ÏµÍ³£¬ĞèÒª·ÖÅäÎª¶¯Ì¬ÄÚ´æµÄÇø¼ä²¢²»Çå³ş
-		ĞèÒªÍ·ÎÄ¼ş<stdlib.h>¹ÊĞèµ÷ÓÃinit_mempoolÀ´³õÊ¼»¯ÄÚ´æ³Ø
-	*/
-	unsigned char _MALLOC_MEM_ memoryTempt[100];				//Ëæ»ú·ÖÅäÒ»¸öÊı×é,ÓÃÓÚ³õÊ¼»¯ÄÚ´æ³Ø£¬xdataÇøÓò
-	init_mempool(memoryTempt, sizeof(memoryTempt));				//³õÊ¼»¯ÄÚ´æ³Ø
-	
-	LCD_Init();													//³õÊ¼»¯LCD, 8Î»²¢¿Ú
-	Timer_Set();												//³õÊ¼»¯¶¨Ê±Æ÷0
-	Snake_Init(&snake);											//³õÊ¼»¯Éß
+    /* 
+        #define _MALLOC_MEM_ xdata
+        51ç”±äºæ²¡æœ‰æ“ä½œç³»ç»Ÿï¼Œéœ€è¦åˆ†é…ä¸ºåŠ¨æ€å†…å­˜çš„åŒºé—´å¹¶ä¸æ¸…æ¥š
+        éœ€è¦å¤´æ–‡ä»¶<stdlib.h>æ•…éœ€è°ƒç”¨init_mempoolæ¥åˆå§‹åŒ–å†…å­˜æ± 
+    */
+    unsigned char _MALLOC_MEM_ memoryTempt[100];     // éšæœºåˆ†é…ä¸€ä¸ªæ•°ç»„,ç”¨äºåˆå§‹åŒ–å†…å­˜æ± ï¼ŒxdataåŒºåŸŸ
+    init_mempool(memoryTempt, sizeof(memoryTempt));  // åˆå§‹åŒ–å†…å­˜æ± 
+
+    LCD_Init();   // åˆå§‹åŒ–LCD, 8ä½å¹¶å£
+    Timer_Set();  // åˆå§‹åŒ–å®šæ—¶å™¨0
+    Snake_Init(&snake);  // åˆå§‹åŒ–è›‡
 }
 
-// ¼òµ¥ÏµÍ³
+// ç®€å•ç³»ç»Ÿ
 void Sys_Easy(){
-	Snake_Init(&snake);											//³õÊ¼»¯Éß
-	change_Screen();
-	while(!PressRet){
-		delay(snake_speed);										//ÑÓÊ±,¿ØÖÆÉß×ßµÄ¿ìÂı
-		
-		snakeRear = Snake_Move(&snake, &FruitLocation);			//ÈÃÉßÒÆ¶¯Ò»¸ñ,²¢ÇÒÈ¡³öÉßÎ²µÄ×ø±ê
-		
-		if(FruitLocation.Y == 100){
-			FruitLocation.Y = 99;								//ËµÃ÷Game_Over
-			continue;											//ÏÂÃæÓï¾ä²»Ö´ĞĞ,Ö±½Ó½øĞĞĞÂÒ»´ÎÑ­»·
-		}else if(FruitLocation.Y == 200){
-			FruitFlag = 0;										//ËµÃ÷³Ôµ½¹ûÊµÁË£¬Çå¿Õ¹ûÊµ´æÔÚ±êÖ¾Î»
-			snake_speed -= 300;									//Ã¿³Ôµ½Ò»¸ö¹ûÊµ,ÉßµÄËÙ¶È¼Ó¿ì
-		}
-		
-																//ÅĞ¶ÏÊÇ·ñÒªĞÂÉú³ÉÒ»¸ö¹ûÊµ
-		if(FruitFlag == 0){
-			//Key_Scan();											//°´¼üÉ¨Ãèº¯Êı
-			LCD_Draw_Fruit(&FruitLocation, &snake);				//Éú³ÉĞÂµÄ¹ûÊµ,²¢»­³öÀ´
-			//Key_Scan();											//°´¼üÉ¨Ãèº¯Êı
-			
-			continue;											//ÓÉÓÚÉßÎ²²»ÔÙ²Á³ı,¶øÇÒÉßÍ·Ò²²»ĞèÒªÖØ»­,ËùÒÔÏÂÃæÓï¾ä²»Ö´ĞĞ,Ö±½Ó½øĞĞĞÂÒ»´ÎÑ­»·
-		}
-		
-		//Key_Scan();												//°´¼üÉ¨Ãèº¯Êı
-		
-		LCD_Draw_Snake(&snake, &snakeRear);						//¸üĞÂÉßµÄÎ»ÖÃ
-	}
-	PressRet = 0;
+    Snake_Init(&snake);  // åˆå§‹åŒ–è›‡
+    change_Screen();
+    while(!PressRet){
+        delay(snake_speed);  // å»¶æ—¶,æ§åˆ¶è›‡èµ°çš„å¿«æ…¢
+
+        snakeRear = Snake_Move(&snake, &FruitLocation);  // è®©è›‡ç§»åŠ¨ä¸€æ ¼,å¹¶ä¸”å–å‡ºè›‡å°¾çš„åæ ‡
+
+        if(FruitLocation.Y == 100){
+            FruitLocation.Y = 99;  // è¯´æ˜Game_Over
+            continue;  // ä¸‹é¢è¯­å¥ä¸æ‰§è¡Œ,ç›´æ¥è¿›è¡Œæ–°ä¸€æ¬¡å¾ªç¯
+        }else if(FruitLocation.Y == 200){
+            FruitFlag = 0;  // è¯´æ˜åƒåˆ°æœå®äº†ï¼Œæ¸…ç©ºæœå®å­˜åœ¨æ ‡å¿—ä½
+            snake_speed -= 300;  // æ¯åƒåˆ°ä¸€ä¸ªæœå®,è›‡çš„é€Ÿåº¦åŠ å¿«
+        }
+
+        // åˆ¤æ–­æ˜¯å¦è¦æ–°ç”Ÿæˆä¸€ä¸ªæœå®
+        if(FruitFlag == 0){
+            //Key_Scan();  // æŒ‰é”®æ‰«æå‡½æ•°
+            LCD_Draw_Fruit(&FruitLocation, &snake);  // ç”Ÿæˆæ–°çš„æœå®,å¹¶ç”»å‡ºæ¥
+            //Key_Scan();  // æŒ‰é”®æ‰«æå‡½æ•°
+
+            continue;  // ç”±äºè›‡å°¾ä¸å†æ“¦é™¤,è€Œä¸”è›‡å¤´ä¹Ÿä¸éœ€è¦é‡ç”»,æ‰€ä»¥ä¸‹é¢è¯­å¥ä¸æ‰§è¡Œ,ç›´æ¥è¿›è¡Œæ–°ä¸€æ¬¡å¾ªç¯
+        }
+
+        //Key_Scan();  // æŒ‰é”®æ‰«æå‡½æ•°
+
+        LCD_Draw_Snake(&snake, &snakeRear);  // æ›´æ–°è›‡çš„ä½ç½®
+    }
+    PressRet = 0;
 }
 
-// À§ÄÑÏµÍ³
+// å›°éš¾ç³»ç»Ÿ
 void Sys_Hard(){
-	Snake_Init(&snake);											//³õÊ¼»¯Éß
-	change_Screen();
-	while(!PressRet){
-		delay(snake_speed);
-		snakeRear = Snake_Move(&snake, &FruitLocation);
-		
-		if(FruitLocation.Y == 100){
-			FruitLocation.Y = 99;
-			continue;
-		}else if(FruitLocation.Y == 200){
-			FruitFlag = 0;
-			snake_speed -= 300;
-		}
-		
-		if(FruitFlag == 0){
-			Inv_Key_Scan();
-			LCD_Draw_Fruit(&FruitLocation, &snake);
-			Inv_Key_Scan();	
-			continue;
-		}
-		Inv_Key_Scan();
-		
-		LCD_Draw_Snake(&snake, &snakeRear);
-	}
-	PressRet = 0;
+    Snake_Init(&snake);  // åˆå§‹åŒ–è›‡
+    change_Screen();
+    while(!PressRet){
+        delay(snake_speed);
+        snakeRear = Snake_Move(&snake, &FruitLocation);
+
+        if(FruitLocation.Y == 100){
+            FruitLocation.Y = 99;
+            continue;
+        }else if(FruitLocation.Y == 200){
+            FruitFlag = 0;
+            snake_speed -= 300;
+        }
+
+        if(FruitFlag == 0){
+            Inv_Key_Scan();
+            LCD_Draw_Fruit(&FruitLocation, &snake);
+            Inv_Key_Scan();	
+            continue;
+        }
+        Inv_Key_Scan();
+
+        LCD_Draw_Snake(&snake, &snakeRear);
+    }
+    PressRet = 0;
 }
 
-// ÌáÊ¾ÏµÍ³
+// æç¤ºç³»ç»Ÿ
 void Sys_Tips(){
-	LCD_Clear_DDRAM();
-	LCD_Write_Strs(0x80, "|-----Tips-----|", 16); 	 	// The-OdD-SnAKee 
-    LCD_Write_Strs(0x90, "| fmw-lyx-zgt  |", 16);		//      easy
-    LCD_Write_Strs(0x88, "|--------------|", 16);		//   -> hard
-    LCD_Write_Strs(0x98, "     ->ok", 9);				//      tips
+    LCD_Clear_DDRAM();
+    LCD_Write_Strs(0x80, "|-----Tips-----|", 16);  // The-OdD-SnAKee 
+    LCD_Write_Strs(0x90, "| fmw-lyx-zgt  |", 16);  //      easy
+    LCD_Write_Strs(0x88, "|--------------|", 16);  //   -> hard
+    LCD_Write_Strs(0x98, "     ->ok", 9);          //      tips
 
-	while(1){
-		if(Key_Return == 0 || Key_Enter == 0){
-			Delay_1ms(20);
-			if(Key_Return == 0 || Key_Enter == 0){
-				while(!Key_Return || !Key_Enter);
-				break;
-			}
-		}
-	}
+    while(1){
+        if(Key_Return == 0 || Key_Enter == 0){
+            Delay_1ms(20);
+            if(Key_Return == 0 || Key_Enter == 0){
+                while(!Key_Return || !Key_Enter);
+                break;
+            }
+        }
+    }
 }
 
 
-
-
-//ÔÚÈÎÒâÎ»ÖÃ»­³öÕûÌõÉß
+// åœ¨ä»»æ„ä½ç½®ç”»å‡ºæ•´æ¡è›‡
 void LCD_Draw_Snake(Snake *snake, Point *ClearLocation){
-	//±éÀúÕâÌõÉß
-	SnakeNode *p;	//¶¨ÒåÒ»¸öÖ¸Õë,ÓÃÓÚ±éÀúÕâÌõÉß
-	
-	for(p=snake->front; p!=NULL; p=p->next){
-		//¸ù¾İµ±Ç°½ÚµãµÄ×ø±ê»­³öÕı·½ĞÎ
-		LCD_Draw_Square(p->Location.X, p->Location.Y, 1);
-	}
-	
-	//ÔÙ¸ù¾İ²Á³ıÎ»ÖÃµÄ×ø±ê²Á³ıÒ»¸öÕı·½ĞÎ
-	//ËµÃ÷Ã»ÓĞ³Ôµ½¹ûÊµ,´ËÊ±²Á³ıÉßÎ²
-	if(FruitFlag != 0){
-		LCD_Draw_Square(ClearLocation->X, ClearLocation->Y, 0);
-	}
+    // éå†è¿™æ¡è›‡
+    SnakeNode *p;  // å®šä¹‰ä¸€ä¸ªæŒ‡é’ˆ,ç”¨äºéå†è¿™æ¡è›‡
+
+    for(p=snake->front; p!=NULL; p=p->next){
+        // æ ¹æ®å½“å‰èŠ‚ç‚¹çš„åæ ‡ç”»å‡ºæ­£æ–¹å½¢
+        LCD_Draw_Square(p->Location.X, p->Location.Y, 1);
+    }
+
+    // å†æ ¹æ®æ“¦é™¤ä½ç½®çš„åæ ‡æ“¦é™¤ä¸€ä¸ªæ­£æ–¹å½¢
+    // è¯´æ˜æ²¡æœ‰åƒåˆ°æœå®,æ­¤æ—¶æ“¦é™¤è›‡å°¾
+    if(FruitFlag != 0){
+        LCD_Draw_Square(ClearLocation->X, ClearLocation->Y, 0);
+    }
 }
 
-//»­³öÓÎÏ·³õÊ¼½çÃæ
+// ç”»å‡ºæ¸¸æˆåˆå§‹ç•Œé¢
 unsigned char Game_Menu(){
-	unsigned char i = 0;
-	unsigned char ch = SYS_HARD;
-	unsigned char code str_point[] = "   ->";
-	unsigned char code str_point_null[] = "     ";
-	change_Screen();
-	
-	//Ğ´Èë²Ëµ¥
-	LCD_Write_Strs(0x80, " The-OdD-SnAKee", 14);
-	LCD_Write_Strs(0x90, "      easy", 10);
-	LCD_Write_Strs(0x88, "   -> hard", 10);
-	LCD_Write_Strs(0x98, "      tips", 10);
-	
-	while(1){
-		//Ñ¡Ôñ easy
-		if(ch == SYS_EASY){
-			// °´¡üÎŞ·´Ó¦
-			// °´¡ıÏìÓ¦
-			if(Key_Down == 0){
-				Delay_1ms(5);
-				if(Key_Down == 0){
-					ch = SYS_HARD;
-					LCD_Write_Strs(0x90, str_point_null, 5);
-					LCD_Write_Strs(0x88, str_point, 5);
-					while(!Key_Down);
-				}
-			}
-		}
-		// Ñ¡Ôñ hard
-		if(ch == SYS_HARD){
-			// °´¡üÏìÓ¦
-			if(Key_Up == 0){
-				Delay_1ms(5);
-				if(Key_Up == 0){
-					ch = SYS_EASY;
-					LCD_Write_Strs(0x88, str_point_null, 5);
-					LCD_Write_Strs(0x90, str_point, 5);
-					while(!Key_Up);
-				}
-			}
-			// °´¡ıÏìÓ¦
-			if(Key_Down == 0){
-				Delay_1ms(5);
-				if(Key_Down == 0){
-					ch = SYS_TIPS;
-					LCD_Write_Strs(0x88, str_point_null, 5);
-					LCD_Write_Strs(0x98, str_point, 5);
-					while(!Key_Down);
-				}
-			}
-		}
-		// Ñ¡Ôñ tips
-		if(ch == SYS_TIPS){
-			// °´¡üÏìÓ¦
-			// °´¡ıÎŞ·´Ó¦
-			if(Key_Up == 0){
-				Delay_1ms(20);
-				if(Key_Up == 0){
-					ch = SYS_HARD;
-					LCD_Write_Strs(0x98, str_point_null, 5);
-					LCD_Write_Strs(0x88, str_point, 5);
-					while(!Key_Up);
-				}
-			}
-		}
-		//Ö»ÓĞµ±°´ÏÂ"¿ªÊ¼"¼üÊ±,ÓÎÏ·²Å»á¿ªÊ¼
-		if(Key_Enter == 0){
-			Delay_1ms(5);
-			if(Key_Enter == 0){			
-				//ÓÃËæ»úÊı²úÉú¹ûÊµ,ÆäÖĞËæ»úÊıµÄÖÖ×ÓÓÃ¶¨Ê±Æ÷»ñÈ¡,°´ÏÂÁË"¿ªÊ¼"¼üºó²úÉúÖÖ×Ó,Ö®ºóÖÖ×Ó²»ÔÙ¸Ä±ä
-				srand(InitSeed);//³õÊ¼»¯ÖÖ×Ó
-				//²úÉúÖÖ×ÓÖ®ºó¶¨Ê±Æ÷0¾Í¿ÉÒÔ¹ØµôÁË
-				TR0 = 0;
-				while(!Key_Enter);
-				//ÍË³öËÀÑ­»·
-				return ch;
-			}
-		}
-	}
+    unsigned char i = 0;
+    unsigned char ch = SYS_HARD;
+    unsigned char code str_point[] = "   ->";
+    unsigned char code str_point_null[] = "     ";
+    change_Screen();
+
+    // å†™å…¥èœå•
+    LCD_Write_Strs(0x80, " The-OdD-SnAKee", 14);
+    LCD_Write_Strs(0x90, "      easy", 10);
+    LCD_Write_Strs(0x88, "   -> hard", 10);
+    LCD_Write_Strs(0x98, "      tips", 10);
+
+    while(1){
+        // é€‰æ‹© easy
+        if(ch == SYS_EASY){
+            // æŒ‰â†‘æ— ååº”
+            // æŒ‰â†“å“åº”
+            if(Key_Down == 0){
+                Delay_1ms(5);
+                if(Key_Down == 0){
+                    ch = SYS_HARD;
+                    LCD_Write_Strs(0x90, str_point_null, 5);
+                    LCD_Write_Strs(0x88, str_point, 5);
+                    while(!Key_Down);
+                }
+            }
+        }
+        // é€‰æ‹© hard
+        if(ch == SYS_HARD){
+            // æŒ‰â†‘å“åº”
+            if(Key_Up == 0){
+                Delay_1ms(5);
+                if(Key_Up == 0){
+                    ch = SYS_EASY;
+                    LCD_Write_Strs(0x88, str_point_null, 5);
+                    LCD_Write_Strs(0x90, str_point, 5);
+                    while(!Key_Up);
+                }
+            }
+            // æŒ‰â†“å“åº”
+            if(Key_Down == 0){
+                Delay_1ms(5);
+                if(Key_Down == 0){
+                    ch = SYS_TIPS;
+                    LCD_Write_Strs(0x88, str_point_null, 5);
+                    LCD_Write_Strs(0x98, str_point, 5);
+                    while(!Key_Down);
+                }
+            }
+        }
+        // é€‰æ‹© tips
+        if(ch == SYS_TIPS){
+            // æŒ‰â†‘å“åº”
+            // æŒ‰â†“æ— ååº”
+            if(Key_Up == 0){
+                Delay_1ms(20);
+                if(Key_Up == 0){
+                    ch = SYS_HARD;
+                    LCD_Write_Strs(0x98, str_point_null, 5);
+                    LCD_Write_Strs(0x88, str_point, 5);
+                    while(!Key_Up);
+                }
+            }
+        }
+        // åªæœ‰å½“æŒ‰ä¸‹"å¼€å§‹"é”®æ—¶,æ¸¸æˆæ‰ä¼šå¼€å§‹
+        if(Key_Enter == 0){
+            Delay_1ms(5);
+            if(Key_Enter == 0){			
+                // ç”¨éšæœºæ•°äº§ç”Ÿæœå®,å…¶ä¸­éšæœºæ•°çš„ç§å­ç”¨å®šæ—¶å™¨è·å–,æŒ‰ä¸‹äº†"å¼€å§‹"é”®åäº§ç”Ÿç§å­,ä¹‹åç§å­ä¸å†æ”¹å˜
+                srand(InitSeed);  // åˆå§‹åŒ–ç§å­
+                // äº§ç”Ÿç§å­ä¹‹åå®šæ—¶å™¨0å°±å¯ä»¥å…³æ‰äº†
+                TR0 = 0;
+                while(!Key_Enter);
+                // é€€å‡ºæ­»å¾ªç¯
+                return ch;
+            }
+        }
+    }
 }
 
-//»­³öÓÎÏ·Ê§°ÜµÄ»­Ãæ
+// ç”»å‡ºæ¸¸æˆå¤±è´¥çš„ç”»é¢
 void Game_Over(){
-	unsigned int i = 0;//ÓÃÓÚforÑ­»·
-	
-	//Çå¿ÕÓÎÏ·½çÃæ,¼´Çå¿ÕDDRAM
-	LCD_Clear_DDRAM();
+    unsigned int i = 0;  // ç”¨äºforå¾ªç¯
 
-	//Ğ´Èë"Game_Over"
-	LCD_Write_Strs(0x92, "GameOver", 8);
-	
-	//ÏÈĞ´Èë"µÃ·Ö: "
-	LCD_Write_Strs(0x8A, "score:", 6);
-	
-	//ÔÙĞ´Èë·ÖÊı
-	LCD_Write_Score(snake.length);//Ğ´Èë·ÖÊıµÄº¯Êı
-	
-	while(1){
-		//Ö»ÓĞµ±°´ÏÂ"»Ø³µ"¼üÊ±,ÓÎÏ·²Å»á¿ªÊ¼
-		if(Key_Enter == 0 || Key_Return == 0){
-			Delay_1ms(10);
-			if(Key_Enter == 0 || Key_Return == 0){			
-				//Ö®ºó½«ÉßÏú»Ù,²¢ÔÙ´Î³õÊ¼»¯
-				Snake_Destroy(&snake);
-				Snake_Init(&snake);
-				
-				//Çå¿Õ¹ûÊµ´æÔÚµÄ±êÖ¾
-				FruitFlag = 0;
-				
-				//ÖØĞÂÉèÖÃ³õÊ¼·½ÏòÎªÏòÓÒ
-				snake_towds = TOWDS_RIGHT;
-				
-				while(!Key_Enter || !Key_Return);
-				//ÍË³öËÀÑ­»·
-				PressRet = 1;
-				break;
-			}
-		}
-	}
+    // æ¸…ç©ºæ¸¸æˆç•Œé¢,å³æ¸…ç©ºDDRAM
+    LCD_Clear_DDRAM();
+
+    // å†™å…¥"Game_Over"
+    LCD_Write_Strs(0x92, "GameOver", 8);
+
+    // å…ˆå†™å…¥"å¾—åˆ†: "
+    LCD_Write_Strs(0x8A, "score:", 6);
+
+    // å†å†™å…¥åˆ†æ•°
+    LCD_Write_Score(snake.length);  // å†™å…¥åˆ†æ•°çš„å‡½æ•°
+
+    while(1){
+        // åªæœ‰å½“æŒ‰ä¸‹"å›è½¦"é”®æ—¶,æ¸¸æˆæ‰ä¼šå¼€å§‹
+        if(Key_Enter == 0 || Key_Return == 0){
+            Delay_1ms(10);
+            if(Key_Enter == 0 || Key_Return == 0){			
+                // ä¹‹åå°†è›‡é”€æ¯,å¹¶å†æ¬¡åˆå§‹åŒ–
+                Snake_Destroy(&snake);
+                Snake_Init(&snake);
+
+                // æ¸…ç©ºæœå®å­˜åœ¨çš„æ ‡å¿—
+                FruitFlag = 0;
+
+                // é‡æ–°è®¾ç½®åˆå§‹æ–¹å‘ä¸ºå‘å³
+                snake_towds = TOWDS_RIGHT;
+
+                while(!Key_Enter || !Key_Return);
+                // é€€å‡ºæ­»å¾ªç¯
+                PressRet = 1;
+                break;
+            }
+        }
+    }
 }
 
-//¼ì²éÉßÊÇ·ñÒ§ËÀ×Ô¼º£¬0±íÊ¾²»»áÒ§ËÀ  1±íÊ¾»áÒ§ËÀ×Ô¼º
+// æ£€æŸ¥è›‡æ˜¯å¦å’¬æ­»è‡ªå·±ï¼Œ0è¡¨ç¤ºä¸ä¼šå’¬æ­»  1è¡¨ç¤ºä¼šå’¬æ­»è‡ªå·±
 bit Snake_Check_Dead(Snake *snake, Point *elemNew){
-	SnakeNode *p = snake->front->next->next;//×î¿ªÊ¼Ö¸Ïò3ºÅÎ»ÖÃ,ÎªÉßÍ·
-	
-	if(snake->length < 4)
-		return 0;
-	else{
-		for(p; p!=NULL; p=p->next){
-			if((elemNew->X == p->Location.X) && (elemNew->Y == p->Location.Y)){
-				return 1;
-			}
-		}
-	}
-	
-	return 0;
+    SnakeNode *p = snake->front->next->next;  // æœ€å¼€å§‹æŒ‡å‘3å·ä½ç½®,ä¸ºè›‡å¤´
+
+    if(snake->length < 4)
+        return 0;
+    else{
+        for(p; p!=NULL; p=p->next){
+            if((elemNew->X == p->Location.X) && (elemNew->Y == p->Location.Y)){
+                return 1;
+            }
+        }
+    }
+
+    return 0;
 }
 
-//Ğ´Èë·ÖÊıµÄº¯Êı
+// å†™å…¥åˆ†æ•°çš„å‡½æ•°
 void LCD_Write_Score(unsigned char Score){
-	Score -= 2;//¼õµô³õÊ¼³¤¶È2
-	
-	//Ğ´Èë·ÖÊıÊ±,ÒªÅĞ¶Ï·ÖÊıµÄÎ»Êı
-	if(Score < 10){
-		LCD_Write(MODE_DATA, '0');	//48¼´Êı×Ö0
-		LCD_Write(MODE_DATA, Score + '0');
-	}else{
-		unsigned char Score_H = Score / 10;
-		unsigned char Score_L = Score % 10;
-		
-		LCD_Write(MODE_DATA, Score_H + '0');
-		LCD_Write(MODE_DATA, Score_L + '0');
-	}
+    Score -= 2;  // å‡æ‰åˆå§‹é•¿åº¦2
+
+    // å†™å…¥åˆ†æ•°æ—¶,è¦åˆ¤æ–­åˆ†æ•°çš„ä½æ•°
+    if(Score < 10){
+        LCD_Write(MODE_DATA, '0');  // 48å³æ•°å­—0
+        LCD_Write(MODE_DATA, Score + '0');
+    }else{
+        unsigned char Score_H = Score / 10;
+        unsigned char Score_L = Score % 10;
+
+        LCD_Write(MODE_DATA, Score_H + '0');
+        LCD_Write(MODE_DATA, Score_L + '0');
+    }
 }
 
-//»­³ö¹ûÊµµÄº¯Êı
+// ç”»å‡ºæœå®çš„å‡½æ•°
 void LCD_Draw_Fruit(Point *FruitLocation, Snake *snake_tempt){
-	//¶¨ÒåÒ»¸öÖ¸Õë,±éÀúÕûÌõÉß
-	SnakeNode *p;
-	
-	//¶¨ÒåÒ»¸ö±êÖ¾Î»,ÓÃÓÚ±íÊ¾Éú³ÉµÄ¹ûÊµÊÇ·ñºÍÉßµÄÉíÌåÖØºÏ,1±íÊ¾ÖØºÏ
-	bit FruitQualifiedFlag = 1;
-	
-	//ÅĞ¶ÏÉú³ÉµÄ¹ûÊµÊÇ·ñºÏ¸ñ,²»ºÏ¸ñµÄ»°ÖØĞÂÉú³ÉÒ»¸öĞÂ¹ûÊµ
-	while(FruitQualifiedFlag){
-		InitSeed = rand();	//ĞÂ²úÉúÒ»¸öËæ»úÊı
-		FruitLocation->X = (InitSeed % 63) * 2;	//X ×î´óÊÇ124,²¢ÇÒ±ØĞëÊÇÅ¼Êı
-		FruitLocation->Y = (InitSeed % 31) * 2;	//Y ×î´óÊÇ60,²¢ÇÒ±ØĞëÊÇÅ¼Êı
-		
-		for(p=snake_tempt->front; p!=NULL; p=p->next){
-			if((p->Location.X == FruitLocation->X) && 
-				 (p->Location.Y == FruitLocation->Y)){
-				break;
-			}
-		}
-		
-		//³öÑ­»·Ö®ºó,Èç¹û´ËÊ± p Îª NULL,ËµÃ÷Ã»ÓĞÖØ¸´,Èç¹ûp²»ÎªNULL,ËµÃ÷ÓĞÖØ¸´
-		if(p == NULL){
-			FruitQualifiedFlag = 0;
-		}
-	}
-	
-	LCD_Draw_Square(FruitLocation->X, FruitLocation->Y, 1);
-	
-	FruitFlag = 1;//»­ºÃ¹ûÊµºó,±êÖ¾Î»ÖÃÎ»
+    // å®šä¹‰ä¸€ä¸ªæŒ‡é’ˆ,éå†æ•´æ¡è›‡
+    SnakeNode *p;
+
+    // å®šä¹‰ä¸€ä¸ªæ ‡å¿—ä½,ç”¨äºè¡¨ç¤ºç”Ÿæˆçš„æœå®æ˜¯å¦å’Œè›‡çš„èº«ä½“é‡åˆ,1è¡¨ç¤ºé‡åˆ
+    bit FruitQualifiedFlag = 1;
+
+    // åˆ¤æ–­ç”Ÿæˆçš„æœå®æ˜¯å¦åˆæ ¼,ä¸åˆæ ¼çš„è¯é‡æ–°ç”Ÿæˆä¸€ä¸ªæ–°æœå®
+    while(FruitQualifiedFlag){
+        InitSeed = rand();  // æ–°äº§ç”Ÿä¸€ä¸ªéšæœºæ•°
+        FruitLocation->X = (InitSeed % 63) * 2;  // X æœ€å¤§æ˜¯124,å¹¶ä¸”å¿…é¡»æ˜¯å¶æ•°
+        FruitLocation->Y = (InitSeed % 31) * 2;  // Y æœ€å¤§æ˜¯60,å¹¶ä¸”å¿…é¡»æ˜¯å¶æ•°
+
+        for(p=snake_tempt->front; p!=NULL; p=p->next){
+            if((p->Location.X == FruitLocation->X) && 
+                (p->Location.Y == FruitLocation->Y)){
+                break;
+            }
+        }
+
+        // å‡ºå¾ªç¯ä¹‹å,å¦‚æœæ­¤æ—¶ p ä¸º NULL,è¯´æ˜æ²¡æœ‰é‡å¤,å¦‚æœpä¸ä¸ºNULL,è¯´æ˜æœ‰é‡å¤
+        if(p == NULL){
+            FruitQualifiedFlag = 0;
+        }
+    }
+
+    LCD_Draw_Square(FruitLocation->X, FruitLocation->Y, 1);
+
+    FruitFlag = 1;  // ç”»å¥½æœå®å,æ ‡å¿—ä½ç½®ä½
 }
 
-//´¦ÀíÉßµÄ×ß¶¯µÄº¯Êı
+// å¤„ç†è›‡çš„èµ°åŠ¨çš„å‡½æ•°
 Point Snake_Move(Snake *snake, Point *FruitLocation){
-	bit EatFruitFlag = 0;
-	bit Game_Over_Falg = 0;
-	Point elemNew;
-	
-	switch(snake_towds){
-		//ÏòÉÏ:
-		case(TOWDS_UP):	
-			//ÅĞ¶ÏÊÇ·ñ»á×²Ç½µ¼ÖÂÓÎÏ·½áÊø
-			if(snake->front->Location.Y == 0){
-				Game_Over_Falg = 1;
-				Game_Over();
-			}else{
-				Key_Scan();
-				//ÅĞ¶ÏÊÇ·ñ»á³Ôµ½¹ûÊµ
-				if((snake->front->Location.Y == FruitLocation->Y + 2) &&
-				    (snake->front->Location.X == FruitLocation->X)){
-					//³Ôµ½¹ûÊµ
-					EatFruitFlag = 1;
-				}
-				elemNew.X = snake->front->Location.X;
-				elemNew.Y = snake->front->Location.Y - 2;
+    bit EatFruitFlag = 0;
+    bit Game_Over_Falg = 0;
+    Point elemNew;
 
-				//ÅĞ¶ÏÊÇ·ñ»áÒ§ËÀ×Ô¼ºµ¼ÖÂÓÎÏ·½áÊø,.µ«ÊÇÇ°ÌáÌõ¼şÊÇÉßµÄ³¤¶È´óÓÚ3
-				if(((snake->length) >= 4) && (Snake_Check_Dead(snake, &elemNew) == 1)){
-					//¼ì²éÉßÊÇ·ñÒ§ËÀ×Ô¼º,Èç¹û»áÒ§ËÀ×Ô¼ºÉÏÃæµÄº¯Êı»á·µ»Ø1
-					Game_Over_Falg = 1;
-					Game_Over();
-				}
-			}
-			break;
-		//ÏòÏÂ:
-		case(TOWDS_DOWN):
-			//ÅĞ¶ÏÊÇ·ñ»á×²Ç½µ¼ÖÂÓÎÏ·½áÊø
-			if (snake->front->Location.Y == 62){
-				Game_Over_Falg = 1;
-				Game_Over();
-			}else{
-				Key_Scan();
-				//ÅĞ¶ÏÊÇ·ñ»á³Ôµ½¹ûÊµ
-				if((snake->front->Location.Y == FruitLocation->Y - 2) &&
-				    (snake->front->Location.X == FruitLocation->X)){
-					//³Ôµ½¹ûÊµ
-					EatFruitFlag = 1;
-				}
-				elemNew.X = snake->front->Location.X;
-				elemNew.Y = snake->front->Location.Y + 2;
-				
-				//ÅĞ¶ÏÊÇ·ñ»áÒ§ËÀ×Ô¼ºµ¼ÖÂÓÎÏ·½áÊø,.µ«ÊÇÇ°ÌáÌõ¼şÊÇÉßµÄ³¤¶È´óÓÚ3
-				if(((snake->length) >= 4) && (Snake_Check_Dead(snake, &elemNew) == 1)){
-					//¼ì²éÉßÊÇ·ñÒ§ËÀ×Ô¼º,Èç¹û»áÒ§ËÀ×Ô¼ºÉÏÃæµÄº¯Êı»á·µ»Ø1
-					Game_Over_Falg = 1;
-					Game_Over();
-				}
-			}
-			break;
-		//Ïò×ó:
-		case(TOWDS_LEFT):
-			//ÅĞ¶ÏÊÇ·ñ»á×²Ç½µ¼ÖÂÓÎÏ·½áÊø
-			if((snake->front->Location.X == 0 ) || 
-			    (snake->front->Location.X == 128)){
-				Game_Over_Falg = 1;
-				Game_Over();
-			}else{
-				Key_Scan();
-				//ÅĞ¶ÏÊÇ·ñ»á³Ôµ½¹ûÊµ
-				if((snake->front->Location.Y == FruitLocation->Y) &&
-				    (snake->front->Location.X == FruitLocation->X + 2)){
-					//³Ôµ½¹ûÊµ
-					EatFruitFlag = 1;
-				}
-				elemNew.X = snake->front->Location.X - 2;
-				elemNew.Y = snake->front->Location.Y;
-				
-				//ÅĞ¶ÏÊÇ·ñ»áÒ§ËÀ×Ô¼ºµ¼ÖÂÓÎÏ·½áÊø,.µ«ÊÇÇ°ÌáÌõ¼şÊÇÉßµÄ³¤¶È´óÓÚ3
-				if(((snake->length) >= 4) && (Snake_Check_Dead(snake, &elemNew) == 1)){
-					//¼ì²éÉßÊÇ·ñÒ§ËÀ×Ô¼º,Èç¹û»áÒ§ËÀ×Ô¼ºÉÏÃæµÄº¯Êı»á·µ»Ø1
-					Game_Over_Falg = 1;
-					Game_Over();
-				}
-			}
-			break;
-		//ÏòÓÒ
-		case(TOWDS_RIGHT):
-			//ÅĞ¶ÏÊÇ·ñ»á×²Ç½µ¼ÖÂÓÎÏ·½áÊø
-			if((snake->front->Location.X == 126) || 
-			    (snake->front->Location.X == 254)){
-				Game_Over_Falg = 1;
-				Game_Over();
-			}else{
-				Key_Scan();
-				//ÅĞ¶ÏÊÇ·ñ»á³Ôµ½¹ûÊµ
-				if((snake->front->Location.Y == FruitLocation->Y) &&
-				    (snake->front->Location.X == FruitLocation->X - 2)){
-					//³Ôµ½¹ûÊµ
-					EatFruitFlag = 1;
-				}
-				elemNew.X = snake->front->Location.X + 2;
-				elemNew.Y = snake->front->Location.Y;
-				
-				//ÅĞ¶ÏÊÇ·ñ»áÒ§ËÀ×Ô¼ºµ¼ÖÂÓÎÏ·½áÊø,.µ«ÊÇÇ°ÌáÌõ¼şÊÇÉßµÄ³¤¶È´óÓÚ3
-				if(((snake->length) >= 4) && (Snake_Check_Dead(snake, &elemNew) == 1)){
-					//¼ì²éÉßÊÇ·ñÒ§ËÀ×Ô¼º,Èç¹û»áÒ§ËÀ×Ô¼ºÉÏÃæµÄº¯Êı»á·µ»Ø1
-					Game_Over_Falg = 1;	
-					Game_Over();
-				}
-			}
-			break;
-		default:
-			break;
-	}
-	
-	//ÅĞ¶ÏÊÇ·ñÓÎÏ·½áÊø
-	if(Game_Over_Falg == 1){
-		FruitLocation->Y = 100;//Õı³£Çé¿öÏÂY×î´ó62
-		elemNew.X = elemNew.Y = 0;//ÆäÊµ´Ë´¦¸³ÖµÒ²ÊÇÎŞĞ§µÄ
-		
-		return elemNew;//ÆäÊµÕâÀï·µ»ØÒ²ÊÇÎŞĞ§µÄ,ÒòÎª·µ»ØÖ®ºóÓÃ²»µ½Õâ¸öÊı¾İ
-	}else{
-		Key_Scan();//°´¼üÉ¨Ãèº¯Êı
-		
-		//Ê×ÏÈ¸ù¾İÉßÍ·µÄ³¯ÏòÔÚÉßÍ·²åÈëĞÂ½áµã
-		Insert_At_Snake_Front(snake, &elemNew);//²¢²»»­³öÀ´,Ö»ÊÇÔÚÊı¾İ²ãÃæ¼ÓÉÏÉßÍ·
-		
-		//EatFruitFlag = 1 ËµÃ÷³Ôµ½ÁË¹ûÊµ
-		if (EatFruitFlag == 1){
-			FruitLocation->Y = 200;//Õı³£Çé¿öÏÂY×î´ó62
-			elemNew.X = elemNew.Y = 0;//ÆäÊµ´Ë´¦¸³ÖµÒ²ÊÇÎŞĞ§µÄ
-			
-			return elemNew;//ÆäÊµÕâÀï·µ»ØÒ²ÊÇÎŞĞ§µÄ,ÒòÎª·µ»ØÖ®ºóÓÃ²»µ½Õâ¸öÊı¾İ
-		}else{
-			//ÊÍ·ÅµôÒ»¸öÎ²½Úµã
-			return Remove_At_Snake_Rear(snake);
-		}
-	}
+    switch(snake_towds){
+        // å‘ä¸Š:
+        case(TOWDS_UP):	
+            // åˆ¤æ–­æ˜¯å¦ä¼šæ’å¢™å¯¼è‡´æ¸¸æˆç»“æŸ
+            if(snake->front->Location.Y == 0){
+                Game_Over_Falg = 1;
+                Game_Over();
+            }else{
+                Key_Scan();
+                // åˆ¤æ–­æ˜¯å¦ä¼šåƒåˆ°æœå®
+                if((snake->front->Location.Y == FruitLocation->Y + 2) &&
+                   (snake->front->Location.X == FruitLocation->X)){
+                    // åƒåˆ°æœå®
+                    EatFruitFlag = 1;
+                }
+                elemNew.X = snake->front->Location.X;
+                elemNew.Y = snake->front->Location.Y - 2;
+
+                // åˆ¤æ–­æ˜¯å¦ä¼šå’¬æ­»è‡ªå·±å¯¼è‡´æ¸¸æˆç»“æŸ,.ä½†æ˜¯å‰ææ¡ä»¶æ˜¯è›‡çš„é•¿åº¦å¤§äº3
+                if(((snake->length) >= 4) && (Snake_Check_Dead(snake, &elemNew) == 1)){
+                    // æ£€æŸ¥è›‡æ˜¯å¦å’¬æ­»è‡ªå·±,å¦‚æœä¼šå’¬æ­»è‡ªå·±ä¸Šé¢çš„å‡½æ•°ä¼šè¿”å›1
+                    Game_Over_Falg = 1;
+                    Game_Over();
+                }
+            }
+            break;
+        // å‘ä¸‹:
+        case(TOWDS_DOWN):
+            // åˆ¤æ–­æ˜¯å¦ä¼šæ’å¢™å¯¼è‡´æ¸¸æˆç»“æŸ
+            if (snake->front->Location.Y == 62){
+                Game_Over_Falg = 1;
+                Game_Over();
+            }else{
+                Key_Scan();
+                // åˆ¤æ–­æ˜¯å¦ä¼šåƒåˆ°æœå®
+                if((snake->front->Location.Y == FruitLocation->Y - 2) &&
+                   (snake->front->Location.X == FruitLocation->X)){
+                    // åƒåˆ°æœå®
+                    EatFruitFlag = 1;
+                }
+                elemNew.X = snake->front->Location.X;
+                elemNew.Y = snake->front->Location.Y + 2;
+
+                // åˆ¤æ–­æ˜¯å¦ä¼šå’¬æ­»è‡ªå·±å¯¼è‡´æ¸¸æˆç»“æŸ,.ä½†æ˜¯å‰ææ¡ä»¶æ˜¯è›‡çš„é•¿åº¦å¤§äº3
+                if(((snake->length) >= 4) && (Snake_Check_Dead(snake, &elemNew) == 1)){
+                    // æ£€æŸ¥è›‡æ˜¯å¦å’¬æ­»è‡ªå·±,å¦‚æœä¼šå’¬æ­»è‡ªå·±ä¸Šé¢çš„å‡½æ•°ä¼šè¿”å›1
+                    Game_Over_Falg = 1;
+                    Game_Over();
+                }
+            }
+            break;
+        // å‘å·¦:
+        case(TOWDS_LEFT):
+            // åˆ¤æ–­æ˜¯å¦ä¼šæ’å¢™å¯¼è‡´æ¸¸æˆç»“æŸ
+            if((snake->front->Location.X == 0 ) || 
+               (snake->front->Location.X == 128)){
+                Game_Over_Falg = 1;
+                Game_Over();
+            }else{
+                Key_Scan();
+                // åˆ¤æ–­æ˜¯å¦ä¼šåƒåˆ°æœå®
+                if((snake->front->Location.Y == FruitLocation->Y) &&
+                   (snake->front->Location.X == FruitLocation->X + 2)){
+                    // åƒåˆ°æœå®
+                    EatFruitFlag = 1;
+                }
+                elemNew.X = snake->front->Location.X - 2;
+                elemNew.Y = snake->front->Location.Y;
+
+                // åˆ¤æ–­æ˜¯å¦ä¼šå’¬æ­»è‡ªå·±å¯¼è‡´æ¸¸æˆç»“æŸ,.ä½†æ˜¯å‰ææ¡ä»¶æ˜¯è›‡çš„é•¿åº¦å¤§äº3
+                if(((snake->length) >= 4) && (Snake_Check_Dead(snake, &elemNew) == 1)){
+                    // æ£€æŸ¥è›‡æ˜¯å¦å’¬æ­»è‡ªå·±,å¦‚æœä¼šå’¬æ­»è‡ªå·±ä¸Šé¢çš„å‡½æ•°ä¼šè¿”å›1
+                    Game_Over_Falg = 1;
+                    Game_Over();
+                }
+            }
+            break;
+        // å‘å³
+        case(TOWDS_RIGHT):
+            // åˆ¤æ–­æ˜¯å¦ä¼šæ’å¢™å¯¼è‡´æ¸¸æˆç»“æŸ
+            if((snake->front->Location.X == 126) || 
+               (snake->front->Location.X == 254)){
+                Game_Over_Falg = 1;
+                Game_Over();
+            }else{
+                Key_Scan();
+                // åˆ¤æ–­æ˜¯å¦ä¼šåƒåˆ°æœå®
+                if((snake->front->Location.Y == FruitLocation->Y) &&
+                   (snake->front->Location.X == FruitLocation->X - 2)){
+                    // åƒåˆ°æœå®
+                    EatFruitFlag = 1;
+                }
+                elemNew.X = snake->front->Location.X + 2;
+                elemNew.Y = snake->front->Location.Y;
+
+                // åˆ¤æ–­æ˜¯å¦ä¼šå’¬æ­»è‡ªå·±å¯¼è‡´æ¸¸æˆç»“æŸ,.ä½†æ˜¯å‰ææ¡ä»¶æ˜¯è›‡çš„é•¿åº¦å¤§äº3
+                if(((snake->length) >= 4) && (Snake_Check_Dead(snake, &elemNew) == 1)){
+                    // æ£€æŸ¥è›‡æ˜¯å¦å’¬æ­»è‡ªå·±,å¦‚æœä¼šå’¬æ­»è‡ªå·±ä¸Šé¢çš„å‡½æ•°ä¼šè¿”å›1
+                    Game_Over_Falg = 1;	
+                    Game_Over();
+                }
+            }
+            break;
+        default:
+            break;
+    }
+
+    // åˆ¤æ–­æ˜¯å¦æ¸¸æˆç»“æŸ
+    if(Game_Over_Falg == 1){
+        FruitLocation->Y = 100;  // æ­£å¸¸æƒ…å†µä¸‹Yæœ€å¤§62
+        elemNew.X = elemNew.Y = 0;  // å…¶å®æ­¤å¤„èµ‹å€¼ä¹Ÿæ˜¯æ— æ•ˆçš„
+ 
+        return elemNew;  // å…¶å®è¿™é‡Œè¿”å›ä¹Ÿæ˜¯æ— æ•ˆçš„,å› ä¸ºè¿”å›ä¹‹åç”¨ä¸åˆ°è¿™ä¸ªæ•°æ®
+    }else{
+        Key_Scan();  // æŒ‰é”®æ‰«æå‡½æ•°
+
+        // é¦–å…ˆæ ¹æ®è›‡å¤´çš„æœå‘åœ¨è›‡å¤´æ’å…¥æ–°ç»“ç‚¹
+        Insert_At_Snake_Front(snake, &elemNew);  // å¹¶ä¸ç”»å‡ºæ¥,åªæ˜¯åœ¨æ•°æ®å±‚é¢åŠ ä¸Šè›‡å¤´
+
+        // EatFruitFlag = 1 è¯´æ˜åƒåˆ°äº†æœå®
+        if (EatFruitFlag == 1){
+            FruitLocation->Y = 200;  // æ­£å¸¸æƒ…å†µä¸‹Yæœ€å¤§62
+            elemNew.X = elemNew.Y = 0;  // å…¶å®æ­¤å¤„èµ‹å€¼ä¹Ÿæ˜¯æ— æ•ˆçš„
+
+            return elemNew;  // å…¶å®è¿™é‡Œè¿”å›ä¹Ÿæ˜¯æ— æ•ˆçš„,å› ä¸ºè¿”å›ä¹‹åç”¨ä¸åˆ°è¿™ä¸ªæ•°æ®
+        }else{
+            // é‡Šæ”¾æ‰ä¸€ä¸ªå°¾èŠ‚ç‚¹
+            return Remove_At_Snake_Rear(snake);
+        }
+    }
 }
